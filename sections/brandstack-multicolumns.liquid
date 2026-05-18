@@ -1,0 +1,1705 @@
+{% comment %}
+Section Title: BrandStack Multicolumns
+Description: Create multicolumns for custom liquid sections, with options for alignment, color, border radius, multiple & dynamic sizes & more.
+Created by BrandStack --> BrandStack.co
+Created: 02.26.2024
+Updated: 09.26.2025
+Version 1.7 BETA (see change log in download folder)
+Need help? Contact us at brian@brandstack.co
+(c) Copyright by BrandStack.co
+Unauthorized reproduction, alteration, distribution, or use of this code, in whole or in part, is strictly forbidden. Any violations may result in legal action to the fullest extent permitted by law.
+{% endcomment %}
+{%- style -%}
+    .section-{{ section.id }}-padding { background: {{ section.settings.section_color }}; padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px; padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px }
+    /* === BG IMAGE OPTIONS (ADD) === */
+.section-{{ section.id }}-padding { position: relative; }
+
+/* Only emit these styles when an image is set */
+{% if section.settings.bg_image != blank %}
+  .section-{{ section.id }}-padding {
+    /* keep your existing background color; just add the image */
+    background-image: url('{{ section.settings.bg_image | image_url }}');
+    background-repeat: no-repeat;
+    background-position: center center;
+    {% if section.settings.bg_display_mode == 'full' %}
+      /* Show the entire image across the section width */
+      background-size: contain;
+    {% else %}
+      /* Natural (behaves like a hero) */
+      background-size: cover;
+    {% endif %}
+  }
+
+  {% if section.settings.bg_display_mode == 'full' %}
+    /* Spacer ensures the whole image is visible even if there’s little content */
+    .section-{{ section.id }}-padding::before {
+      content: "";
+      display: block;
+      width: 100%;
+      /* height = width / aspect_ratio; default fallback = 2 */
+      padding-top: calc(100% / {{ section.settings.bg_image.aspect_ratio | default: 2 }});
+    }
+  {% endif %}
+{% endif %}
+/* === /BG IMAGE OPTIONS (ADD) === */
+    .section-{{ section.id }}-padding .mcl-wrapper { display: flex; flex-wrap: wrap; justify-content: {{ section.settings.alignment }}; gap: {{ section.settings.space }}px; background: {{ section.settings.section_inside_color }}; border-radius: {{ section.settings.section_inside_radius }}px; border: {{ section.settings.section_inside_thikness }}px solid {{ section.settings.section_inside_border }}; padding: {{ section.settings.padding_top_bottom }}px {{ section.settings.padding_left_right }}px }
+    .section-{{ section.id }}-padding .mcl-column { width: 100%; padding: 12px 15px; border-radius: {{ section.settings.border_radius }}px }
+    .multicolumn--custom .mcl-column * { color: inherit }
+    .multicolumn--custom .mcl-column h2, .multicolumn--custom .mcl-column h3, .multicolumn--custom .mcl-column h4, .multicolumn--custom .mcl-column h5, .multicolumn--custom .mcl-column h6, .multicolumn--custom .mcl-column p, .multicolumn--custom .mcl-column div { display: block; width: 100% }
+
+    {% if section.settings.full_width == true %}
+        .section-{{ section.id }}-padding .page-width { width: 100%; max-width: 100%; padding: 0 }
+    {% endif %}
+    
+    @media screen and ( min-width: 768px ) {
+        .section-{{ section.id }}-padding { padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px }
+        .multicolumn--custom .cwf--item-single .image--has-image .cwf-image-2 { opacity: 0; position: absolute; left: 0; top: 0; right: 0 }
+        {% if section.settings.hide_desktop == true %}
+            .section-{{ section.id }}-padding { display: none }
+        {% endif %}
+        .multicolumn--custom .swipe-text { display: none !important }
+    }
+
+    @media screen and ( max-width: 767px ) {
+        {% if section.settings.hide_mobile == true %}
+            .section-{{ section.id }}-padding { display: none }
+        {% endif %}
+        .multicolumn--custom .mcl-column { max-width: 100% !important }
+        .section-{{ section.id }}-padding .mcl-wrapper { gap: {{ section.settings.space_mob }}px; padding: {{ section.settings.padding_top_bottom_mob }}px {{ section.settings.padding_left_right_mob }}px }
+        main { overflow: hidden }
+    }
+{%- endstyle -%}
+
+<section class="multicolumn--custom section-{{ section.id }}-padding">
+    <div class="isolate page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+        <div class="mcl-wrapper">
+            {%- for block in section.blocks -%}
+                <div class="mcl-column {% if block.settings.stack_mobile %}mcl--stack-mobile{% endif %}" id="mcl-column-{{ block.id }}" {{ block.shopify_attributes }}>
+                    <style>
+                        #mcl-column-{{ block.id }} { background: {{ block.settings.background }}; max-width: calc( {{ block.settings.width }}% - {{ section.settings.space }}px ); color: {{ block.settings.color }} }
+                        #mcl-column-{{ block.id }} { display: flex; align-items: {{ block.settings.block_align }} }
+                        #mcl-column-{{ block.id }} .mcl--inner { display: flex; align-items: center; width: 100%; flex-wrap: wrap }
+                        #mcl-column-{{ block.id }} center { width: 100% }
+
+                        #mcl-column-{{ block.id }} .mcl--inner-split { flex-wrap: nowrap; gap: {{ block.settings.column_gap }}px }
+                        #mcl-column-{{ block.id }} .mcl--inner-split img { max-width: 100% }
+                        #mcl-column-{{ block.id }} .mcl--inner-split > * { align-self: {{ block.settings.block_align }} }
+
+                        @media screen and ( min-width: 768px ) {
+                            {% if block.settings.hide_desktop == true %}
+                                #mcl-column-{{ block.id }} { display: none }
+                            {% endif %}
+
+                            #mcl-column-{{ block.id }} .mcl--inner { text-align: {{ block.settings.block_alignment }} }
+
+                            {% if block.settings.block_alignment == 'left' %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-right: auto }
+                            {% elsif block.settings.block_alignment == 'right' %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-left: auto }
+                            {% else %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-left: auto; margin-right: auto }
+                            {% endif %}
+                        }
+                        @media screen and ( max-width: 767px ) {
+                            {% if block.settings.hide_mobile == true %}
+                                #mcl-column-{{ block.id }} { display: none }
+                            {% endif %}
+
+                            {% if block.settings.stack_mobile == true %}
+                                #mcl-column-{{ block.id }} .mcl--inner-split { flex-wrap: wrap; gap: {{ block.settings.column_gap_mobile }}px }
+                                #mcl-column-{{ block.id }} .mcl--inner-split .mcl--split { width: 100% }
+                            {% endif %}
+
+                            #mcl-column-{{ block.id }} .mcl--inner { text-align: {{ block.settings.alignment_mobile }} }
+
+                            {% if block.settings.alignment_mobile == 'left' %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-right: auto }
+                            {% elsif block.settings.alignment_mobile == 'right' %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-left: auto }
+                            {% else %}
+                            #mcl-column-{{ block.id }} .mcl--inner * { margin-left: auto; margin-right: auto }
+                            {% endif %}
+                        }
+                    </style>
+                    {% if block.type == 'split_block' %}
+                        <div class="mcl--inner mcl--inner-split">
+                            <div class="mcl--split mcl--split-1">{{ block.settings.custom_liquid_1 }}</div>
+                            <div class="mcl--split mcl--split-2">{{ block.settings.custom_liquid_2 }}</div>
+                        </div>
+                    {% elsif block.type == 'tri_block' %}
+                        <div class="mcl--inner mcl--inner-split mcl--inner-tri">
+                            <div class="mcl--split mcl--split-1">{{ block.settings.custom_liquid_1 }}</div>
+                            <div class="mcl--split mcl--split-2">{{ block.settings.custom_liquid_2 }}</div>
+                            <div class="mcl--split mcl--split-3">{{ block.settings.custom_liquid_3 }}</div>
+                        </div>
+                    {% elsif block.type == 'two_plus_one_block' %}
+                    {% if block.settings.stack_mobile %}
+  <style>
+    @media screen and (max-width: 767px) {
+      #mcl-column-{{ block.id }} .mcl--2-1-top {
+        flex-wrap: wrap !important;
+      }
+      #mcl-column-{{ block.id }} .mcl--2-1-top > .mcl--split {
+        width: 100% !important;
+      }
+    }
+  </style>
+{% endif %}
+<div class="mcl--inner mcl--inner-2-1" style="width: 100%;">
+  {% if block.settings.block_order == 'two-over-one' %}
+    <div class="mcl--2-1-top" style="display: flex; width: 100%; gap: {{ block.settings.column_gap }}px;">
+      <div class="mcl--split mcl--split-1" style="width: 50%;">{{ block.settings.custom_liquid_1 }}</div>
+      <div class="mcl--split mcl--split-2" style="width: 50%;">{{ block.settings.custom_liquid_2 }}</div>
+    </div>
+    <div class="mcl--2-1-bottom" style="width: 100%; margin-top: {{ block.settings.column_gap }}px;">
+      <div class="mcl--split mcl--split-3" style="width: 100%;">{{ block.settings.custom_liquid_3 }}</div>
+    </div>
+  {% else %}
+    <div class="mcl--2-1-bottom" style="width: 100%; margin-bottom: {{ block.settings.column_gap }}px;">
+      <div class="mcl--split mcl--split-3" style="width: 100%;">{{ block.settings.custom_liquid_3 }}</div>
+    </div>
+    <div class="mcl--2-1-top" style="display: flex; width: 100%; gap: {{ block.settings.column_gap }}px;">
+      <div class="mcl--split mcl--split-1" style="width: 50%;">{{ block.settings.custom_liquid_1 }}</div>
+      <div class="mcl--split mcl--split-2" style="width: 50%;">{{ block.settings.custom_liquid_2 }}</div>
+    </div>
+  {% endif %}
+</div>
+                    {% elsif block.type == 'quad_block' %}
+                        <div class="mcl--inner mcl--inner-split mcl--inner-tri">
+                            <div class="mcl--split mcl--split-1">{{ block.settings.custom_liquid_1 }}</div>
+                            <div class="mcl--split mcl--split-2">{{ block.settings.custom_liquid_2 }}</div>
+                            <div class="mcl--split mcl--split-3">{{ block.settings.custom_liquid_3 }}</div>
+                            <div class="mcl--split mcl--split-4">{{ block.settings.custom_liquid_4 }}</div>
+                        </div>
+                    {% elsif block.type == 'fifth_block' %}
+                        <div class="mcl--inner mcl--inner-split mcl--inner-tri">
+                            <div class="mcl--split mcl--split-1">{{ block.settings.custom_liquid_1 }}</div>
+                            <div class="mcl--split mcl--split-2">{{ block.settings.custom_liquid_2 }}</div>
+                            <div class="mcl--split mcl--split-3">{{ block.settings.custom_liquid_3 }}</div>
+                            <div class="mcl--split mcl--split-4">{{ block.settings.custom_liquid_4 }}</div>
+                            <div class="mcl--split mcl--split-5">{{ block.settings.custom_liquid_5 }}</div>
+                        </div>
+                    {% else %}
+                        <div class="mcl--inner">{{ block.settings.custom_liquid }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% schema %}
+    {
+        "name": "BrandStack Multicolumns",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Section Settings"
+            },
+            {
+                "type": "color",
+                "id": "section_color",
+                "label": "Background Color",
+                "default": "#ffffff"
+            },
+            {
+  "type": "image_picker",
+  "id": "bg_image",
+  "label": "Background Image"
+},
+{
+  "type": "select",
+  "id": "bg_display_mode",
+  "label": "Background Display",
+  "default": "natural",
+  "options": [
+    { "value": "full", "label": "Edge-to-edge (show full image)" },
+    { "value": "natural", "label": "Natural (crop to content)" }
+  ]
+},
+            {
+                "type": "range",
+                "id": "padding_top",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Top Padding",
+                "default": 40
+            },
+            {
+                "type": "range",
+                "id": "padding_bottom",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Bottom Padding",
+                "default": 40
+            },
+            {
+                "type": "header",
+                "content": "Section Insider"
+            },
+            {
+                "type": "color",
+                "id": "section_inside_color",
+                "label": "Background Color",
+                "default": "transparent"
+            },
+            {
+                "type": "color",
+                "id": "section_inside_border",
+                "label": "Border Color",
+                "default": "#dddddd"
+            },
+            {
+                "type": "range",
+                "id": "section_inside_thikness",
+                "min": 0,
+                "max": 20,
+                "step": 1,
+                "unit": "px",
+                "label": "Border Thickness",
+                "default": 0
+            },
+            {
+                "type": "range",
+                "id": "section_inside_radius",
+                "min": 0,
+                "max": 50,
+                "step": 1,
+                "unit": "px",
+                "label": "Border Radius",
+                "default": 10
+            },
+            {
+                "type": "header",
+                "content": "Padding - Desktop"
+            },
+            {
+                "type": "range",
+                "id": "padding_top_bottom",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Top/Bottom Padding",
+                "default": 12
+            },
+            {
+                "type": "range",
+                "id": "padding_left_right",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Left/Right Padding",
+                "default": 12
+            },
+            {
+                "type": "header",
+                "content": "Padding - Mobile"
+            },
+            {
+                "type": "range",
+                "id": "padding_top_bottom_mob",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Top/Bottom Padding",
+                "default": 8
+            },
+            {
+                "type": "range",
+                "id": "padding_left_right_mob",
+                "min": 0,
+                "max": 100,
+                "step": 4,
+                "unit": "px",
+                "label": "Left/Right Padding",
+                "default": 8
+            },
+            {
+                "type": "header",
+                "content": "Visibility Settings"
+            },
+            {
+                "type": "checkbox",
+                "id": "full_width",
+                "default": false,
+                "label": "Make Section Full Width"
+            },
+            {
+                "type": "checkbox",
+                "id": "hide_desktop",
+                "default": false,
+                "label": "Hide on desktop"
+            },
+            {
+                "type": "checkbox",
+                "id": "hide_mobile",
+                "default": false,
+                "label": "Hide on mobile"
+            },
+            {
+                "type": "header",
+                "content": "Block Settings"
+            },
+            {
+                "type": "range",
+                "id": "space",
+                "min": 0,
+                "max": 50,
+                "step": 1,
+                "unit": "px",
+                "label": "Desktop - Space between blocks",
+                "default": 20
+            },
+            {
+                "type": "range",
+                "id": "space_mob",
+                "min": 0,
+                "max": 50,
+                "step": 1,
+                "unit": "px",
+                "label": "Mobile - Space between blocks",
+                "default": 15
+            },
+            {
+                "type": "range",
+                "id": "border_radius",
+                "min": 0,
+                "max": 50,
+                "step": 1,
+                "unit": "px",
+                "label": "Border Radius",
+                "default": 4
+            },
+            {
+                "type": "select",
+                "id": "alignment",
+                "options": [
+                    {
+                      "value": "left",
+                      "label": "Left"
+                    },
+                    {
+                      "value": "center",
+                      "label": "Center"
+                    },
+                    {
+                      "value": "right",
+                      "label": "Right"
+                    }
+                ],
+                "default": "center",
+                "label": "Alignment",
+                "info": "Please note this only applies if this block is on its own row."
+            }
+        ],
+        "max_blocks": 100,
+        "blocks": [
+            {
+                "type": "block",
+                "name": "Block",
+                "settings": [
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid",
+                        "label": "t:sections.custom-liquid.settings.custom_liquid.label",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "select",
+                        "id": "width",
+                        "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "35",
+                              "label": "35%"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+                        "default": "50",
+                        "label": "Column Width"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_alignment",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Desktop Alignment"
+                    },
+                    {
+                        "type": "select",
+                        "id": "alignment_mobile",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Mobile Alignment",
+                    },
+                    {
+                        "type": "color",
+                        "id": "background",
+                        "label": "Background Color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "color",
+                        "default": "#000000",
+                        "label": "Text Color"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_align",
+                        "options": [
+                            {
+                              "value": "baseline",
+                              "label": "Top"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Middle"
+                            },
+                            {
+                              "value": "end",
+                              "label": "Bottom"
+                            }
+                        ],
+                        "default": "center",
+                        "label": "Content Alignment"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_desktop",
+                        "default": false,
+                        "label": "Hide on desktop"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_mobile",
+                        "default": false,
+                        "label": "Hide on mobile"
+                    }
+                ]
+            },
+            {
+                "type": "split_block",
+                "name": "Split Block",
+                "settings": [
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_1",
+                        "label": "Custom Liquid 1",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_2",
+                        "label": "Custom Liquid 2",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Liquid",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "width",
+                        "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+                        "default": "50",
+                        "label": "Column Width"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "stack_mobile",
+                        "default": false,
+                        "label": "Stack Blocks on Mobile"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap_mobile",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Stack on Mobile",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_alignment",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Desktop Alignment"
+                    },
+                    {
+                        "type": "select",
+                        "id": "alignment_mobile",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Mobile Alignment",
+                    },
+                    {
+                        "type": "color",
+                        "id": "background",
+                        "label": "Background Color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "color",
+                        "default": "#000000",
+                        "label": "Text Color"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_align",
+                        "options": [
+                            {
+                              "value": "baseline",
+                              "label": "Top"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Middle"
+                            },
+                            {
+                              "value": "end",
+                              "label": "Bottom"
+                            }
+                        ],
+                        "default": "center",
+                        "label": "Content Alignment"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_desktop",
+                        "default": false,
+                        "label": "Hide on desktop"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_mobile",
+                        "default": false,
+                        "label": "Hide on mobile"
+                    }
+                ]
+            },
+            {
+                "type": "tri_block",
+                "name": "Tri Block",
+                "settings": [
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_1",
+                        "label": "Custom Liquid 1",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_2",
+                        "label": "Custom Liquid 2",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_3",
+                        "label": "Custom Liquid 3",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Liquid",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "width",
+                        "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+                        "default": "50",
+                        "label": "Column Width"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "stack_mobile",
+                        "default": false,
+                        "label": "Stack Blocks on Mobile"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap_mobile",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Stack on Mobile",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_alignment",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Desktop Alignment"
+                    },
+                    {
+                        "type": "select",
+                        "id": "alignment_mobile",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Mobile Alignment",
+                    },
+                    {
+                        "type": "color",
+                        "id": "background",
+                        "label": "Background Color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "color",
+                        "default": "#000000",
+                        "label": "Text Color"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_align",
+                        "options": [
+                            {
+                              "value": "baseline",
+                              "label": "Top"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Middle"
+                            },
+                            {
+                              "value": "end",
+                              "label": "Bottom"
+                            }
+                        ],
+                        "default": "center",
+                        "label": "Content Alignment"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_desktop",
+                        "default": false,
+                        "label": "Hide on desktop"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_mobile",
+                        "default": false,
+                        "label": "Hide on mobile"
+                    }
+                ]
+            },
+          {
+  "type": "two_plus_one_block",
+  "name": "2 Over 1 Block",
+  "settings": [
+    {
+  "type": "select",
+  "id": "block_order",
+  "label": "Block Order",
+  "default": "two-over-one",
+  "options": [
+    { "value": "two-over-one", "label": "Two on Top, One Below" },
+    { "value": "one-over-two", "label": "One on Top, Two Below" }
+  ]
+},
+    {
+      "type": "liquid",
+      "id": "custom_liquid_1",
+      "label": "Custom Liquid 1",
+      "info": "Top Left"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_liquid_2",
+      "label": "Custom Liquid 2",
+      "info": "Top Right"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_liquid_3",
+      "label": "Custom Liquid 3",
+      "info": "Bottom Full Width"
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Space Between Liquid",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "55",
+                              "label": "55%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+      "default": "50",
+      "label": "Column Width"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_mobile",
+      "default": false,
+      "label": "Stack Blocks on Mobile"
+    },
+    {
+      "type": "range",
+      "id": "column_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Space Between Stack on Mobile",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "block_alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "label": "Desktop Alignment"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left",
+      "label": "Mobile Alignment"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background Color"
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "default": "#000000",
+      "label": "Text Color"
+    },
+    {
+      "type": "select",
+      "id": "block_align",
+      "options": [
+        { "value": "baseline", "label": "Top" },
+        { "value": "center", "label": "Middle" },
+        { "value": "end", "label": "Bottom" }
+      ],
+      "default": "center",
+      "label": "Content Alignment"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_desktop",
+      "default": false,
+      "label": "Hide on desktop"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_mobile",
+      "default": false,
+      "label": "Hide on mobile"
+    }
+  ]
+},
+          {
+                "type": "quad_block",
+                "name": "Quad Block",
+                "settings": [
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_1",
+                        "label": "Custom Liquid 1",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_2",
+                        "label": "Custom Liquid 2",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_3",
+                        "label": "Custom Liquid 3",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_4",
+                        "label": "Custom Liquid 4",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Liquid",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "width",
+                        "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+                        "default": "50",
+                        "label": "Column Width"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "stack_mobile",
+                        "default": false,
+                        "label": "Stack Blocks on Mobile"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap_mobile",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Stack on Mobile",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_alignment",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Desktop Alignment"
+                    },
+                    {
+                        "type": "select",
+                        "id": "alignment_mobile",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Mobile Alignment",
+                        "info": "Please note this only applies if this block is on its own row."
+                    },
+                    {
+                        "type": "color",
+                        "id": "background",
+                        "label": "Background Color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "color",
+                        "default": "#000000",
+                        "label": "Text Color"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_align",
+                        "options": [
+                            {
+                              "value": "baseline",
+                              "label": "Top"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Middle"
+                            },
+                            {
+                              "value": "end",
+                              "label": "Bottom"
+                            }
+                        ],
+                        "default": "center",
+                        "label": "Content Alignment"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_desktop",
+                        "default": false,
+                        "label": "Hide on desktop"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_mobile",
+                        "default": false,
+                        "label": "Hide on mobile"
+                    }
+                ]
+            },
+            {
+                "type": "fifth_block",
+                "name": "One Fifth Block",
+                "settings": [
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_1",
+                        "label": "Custom Liquid 1",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_2",
+                        "label": "Custom Liquid 2",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_3",
+                        "label": "Custom Liquid 3",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_4",
+                        "label": "Custom Liquid 4",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "liquid",
+                        "id": "custom_liquid_5",
+                        "label": "Custom Liquid 5",
+                        "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Liquid",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "width",
+                        "options": [
+                            {
+                              "value": "5",
+                              "label": "5%"
+                            }, 
+                            {
+                              "value": "10",
+                              "label": "10%"
+                            },
+                            {
+                              "value": "11.11",
+                              "label": "1/9"
+                            },
+                            {
+                              "value": "12.5",
+                              "label": "1/8"
+                            }, 
+                            {
+                              "value": "16.66",
+                              "label": "1/6"
+                            },
+                            {
+                              "value": "15",
+                              "label": "15%"
+                            }, 
+                            {
+                              "value": "20",
+                              "label": "20%"
+                            },
+                            {
+                              "value": "25",
+                              "label": "25%"
+                            },
+                            {
+                              "value": "30",
+                              "label": "30%"
+                            },
+                            {
+                              "value": "33.33",
+                              "label": "1/3"
+                            },
+                            {
+                              "value": "37.5",
+                              "label": "37.5"
+                            },
+                            {
+                              "value": "40",
+                              "label": "40%"
+                            },
+                            {
+                              "value": "50",
+                              "label": "50%"
+                            },
+                            {
+                              "value": "60",
+                              "label": "60%"
+                            },
+                            {
+                              "value": "66.66",
+                              "label": "2/3"
+                            },
+                            {
+                              "value": "75",
+                              "label": "75%"
+                            },
+                            {
+                              "value": "80",
+                              "label": "80%"
+                            },
+                            {
+                              "value": "83.33",
+                              "label": "5/6"
+                            },
+                            {
+                              "value": "90",
+                              "label": "90%"
+                            },
+                            {
+                              "value": "100",
+                              "label": "100%"
+                            }
+                        ],
+                        "default": "50",
+                        "label": "Column Width"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "stack_mobile",
+                        "default": false,
+                        "label": "Stack Blocks on Mobile"
+                    },
+                    {
+                        "type": "range",
+                        "id": "column_gap_mobile",
+                        "min": 0,
+                        "max": 100,
+                        "step": 4,
+                        "unit": "px",
+                        "label": "Space Between Stack on Mobile",
+                        "default": 20
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_alignment",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Desktop Alignment"
+                    },
+                    {
+                        "type": "select",
+                        "id": "alignment_mobile",
+                        "options": [
+                            {
+                              "value": "left",
+                              "label": "Left"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Center"
+                            },
+                            {
+                              "value": "right",
+                              "label": "Right"
+                            }
+                        ],
+                        "default": "left",
+                        "label": "Mobile Alignment",
+                        "info": "Please note this only applies if this block is on its own row."
+                    },
+                    {
+                        "type": "color",
+                        "id": "background",
+                        "label": "Background Color"
+                    },
+                    {
+                        "type": "color",
+                        "id": "color",
+                        "default": "#000000",
+                        "label": "Text Color"
+                    },
+                    {
+                        "type": "select",
+                        "id": "block_align",
+                        "options": [
+                            {
+                              "value": "baseline",
+                              "label": "Top"
+                            },
+                            {
+                              "value": "center",
+                              "label": "Middle"
+                            },
+                            {
+                              "value": "end",
+                              "label": "Bottom"
+                            }
+                        ],
+                        "default": "center",
+                        "label": "Content Alignment"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_desktop",
+                        "default": false,
+                        "label": "Hide on desktop"
+                    },
+                    {
+                        "type": "checkbox",
+                        "id": "hide_mobile",
+                        "default": false,
+                        "label": "Hide on mobile"
+                    }
+                ]
+            }
+        ],
+        "presets": [
+            {
+                "name": "BrandStack Multicolumns",
+                "category": "BrandStack.co"
+            }
+        ]
+    }
+{% endschema %}

@@ -1,0 +1,359 @@
+{% comment %}
+Testimonials Slideshow Section
+- Desktop: full testimonial + blurbs + dots
+- Mobile: hide blurbs; show full testimonial + animated dots
+- Blocks use Custom HTML (via "liquid" inputs)
+- Inactive blurbs dim; hover undims (no shadow). Active blurb has bg + shadow.
+- Dot nav shows an animated stroke countdown (color #121212)
+- Mobile font auto-shrink: media queries with !important override inline font-size inside Custom HTML
+- Font Awesome quote marks overlaid (top-left & bottom-right)
+- UPDATE: Keep vertical overlap as-is; reduce horizontal overlap so icons don’t go off-screen on mobile or into blurbs on desktop
+{% endcomment %}
+
+<!-- Load Font Awesome (for quote icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<section 
+  class="testimonials-slideshow" 
+  style="background-color: {{ section.settings.section_bg_color }};
+         margin: {{ section.settings.section_margin_top_bottom }}px 0;">
+  <div class="page-width">
+    
+    {% if section.settings.section_title != blank %}
+      <div class="testimonials-title rte" style="margin-bottom: 2rem;">
+        {{ section.settings.section_title }}
+      </div>
+    {% endif %}
+
+    <div class="testimonials-grid">
+      
+      <!-- LEFT: Full Testimonial Slideshow -->
+      <div
+        class="testimonials-left"
+        style="
+          --quote-overlap: {{ section.settings.quote_overlap }}px; /* vertical overlap only */
+          background-color: {{ section.settings.left_bg_color }};
+          border-top-left-radius: 0px;
+          border-top-right-radius: {{ section.settings.left_radius }}px;
+          border-bottom-right-radius: 0px;
+          border-bottom-left-radius: {{ section.settings.left_radius }}px;
+          padding: {{ section.settings.left_padding_top_bottom }}px {{ section.settings.left_padding_left_right }}px;
+          margin: {{ section.settings.left_margin_top_bottom }}px {{ section.settings.left_margin_left_right }}px;
+        "
+      >
+        <!-- Quote Icons (overlapping) -->
+        <i class="quote-icon quote-left fa-solid fa-quote-left" aria-hidden="true"></i>
+        <i class="quote-icon quote-right fa-solid fa-quote-right" aria-hidden="true"></i>
+
+        <div
+          class="testimonial-slides"
+          data-autorotate="{{ section.settings.autorotate }}"
+          data-interval="{{ section.settings.interval | times: 1000 }}"
+        >
+          {% for block in section.blocks %}
+            <div class="testimonial-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+              <div class="testimonial-text rte">
+                {{ block.settings.full_testimonial_html }}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RIGHT: Clickable blurbs (desktop only) -->
+      <div
+        class="testimonials-right"
+        style="padding: {{ section.settings.right_padding_top_bottom }}px {{ section.settings.right_padding_left_right }}px;"
+      >
+        {% for block in section.blocks %}
+          <div
+            class="testimonial-blurb {% if forloop.first %}active{% endif %}"
+            data-index="{{ forloop.index0 }}"
+            role="button" tabindex="0"
+            style="
+              border-radius: {{ section.settings.blurb_radius }}px;
+              margin: {{ section.settings.blurb_margin_top_bottom }}px {{ section.settings.blurb_margin_left_right }}px;
+              padding: {{ section.settings.blurb_padding_top_bottom }}px {{ section.settings.blurb_padding_left_right }}px;
+            "
+          >
+            {% if block.settings.image != blank %}
+              <img
+                class="testimonial-image"
+                src="{{ block.settings.image | image_url: width: 60 }}"
+                alt="testimonial image"
+                width="60"
+                height="60"
+                loading="lazy"
+              >
+            {% endif %}
+            <div class="testimonial-blurb-text rte">
+              {{ block.settings.blurb_html }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- DOT NAVIGATION -->
+    <div class="testimonial-dots">
+      {% for block in section.blocks %}
+        <div class="testimonial-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.index0 }}">
+          <svg class="progress-ring" width="24" height="24" aria-hidden="true" focusable="false">
+            <circle class="ring-bg" stroke="#121212" stroke-width="2" fill="transparent" r="10" cx="12" cy="12"/>
+            <circle class="ring-progress" stroke="#121212" stroke-width="2" fill="transparent" r="10" cx="12" cy="12"/>
+          </svg>
+          <span class="dot-inner" aria-hidden="true"></span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+.testimonials-slideshow { padding: 4rem 0; }
+.testimonials-grid { display: flex; gap: 2rem; align-items: flex-start; overflow: visible; }
+.testimonials-left, .testimonials-right { flex: 1; min-width: 0; }
+
+/* Ensure quote icons can bleed a bit but not too far horizontally */
+.testimonials-left { position: relative; overflow: visible; z-index: 1; }
+.testimonial-slides { position: relative; z-index: 2; }
+
+/* QUOTE ICONS — solid #121212, no transparency */
+.quote-icon {
+  position: absolute;
+  z-index: 1;            /* under text (z=2), above the card background */
+  line-height: 1;
+  pointer-events: none;
+  font-size: {{ section.settings.quote_size }}px;
+  color: #121212;
+  opacity: 1;
+}
+/* Vertical overlap from setting; horizontal kept modest to avoid overflow/overlap */
+.quote-left  { top: calc(-1 * var(--quote-overlap));  left: -12px; }
+.quote-right { bottom: calc(-1 * var(--quote-overlap)); right: -12px; }
+
+/* On mobile, tuck icons in a little more to avoid touching edges */
+@media (max-width: 990px) {
+  .quote-left  { left: -6px; }
+  .quote-right { right: -6px; }
+}
+
+/* Slideshow */
+.testimonial-slide { display: none; }
+.testimonial-slide.active { display: block; animation: fadeIn 0.5s ease; }
+
+/* Typography base (let your inline styles control desktop size) */
+.testimonials-title { line-height: 1.3; }
+.testimonial-text { line-height: 1.5; }
+.testimonial-blurb-text { line-height: 1.4; }
+
+/* Right blurbs */
+.testimonials-right { display: flex; flex-direction: column; }
+.testimonial-blurb {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 22px; /* spacing between image & text */
+  border-radius: inherit;
+  transition: background-color 0.25s ease, opacity 0.25s ease;
+  background-color: inherit; /* inactive uses section bg */
+}
+.testimonial-blurb:not(.active) { opacity: 0.6; }         /* dim inactive */
+.testimonial-blurb:not(.active):hover { opacity: 1; }     /* brighten on hover */
+.testimonial-blurb.active {
+  background-color: {{ section.settings.blurb_bg_color }};
+  opacity: 1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.testimonial-blurb img.testimonial-image {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* DOTS */
+.testimonial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 2rem;
+}
+.testimonial-dot {
+  position: relative;
+  width: 24px; height: 24px;
+  cursor: pointer;
+}
+.testimonial-dot .dot-inner {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  background: #121212;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.progress-ring { transform: rotate(-90deg); }
+.ring-bg { opacity: 0.2; }
+.ring-progress {
+  stroke-dasharray: 62.8;      /* 2 * Math.PI * r (r=10) */
+  stroke-dashoffset: 62.8;     /* start empty */
+  transition: stroke-dashoffset linear;
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+/* MOBILE: hide blurbs; auto-shrink testimonial text even if inline size is set */
+@media (max-width: 990px) {
+  .testimonials-grid { flex-direction: column; }
+  .testimonials-right { display: none; } /* hide blurbs on mobile */
+}
+
+/* Gentle mobile shrink (overrides inline font-size inside Custom HTML) */
+@media (max-width: 768px) {
+  .testimonials-slideshow .testimonial-text.rte,
+  .testimonials-slideshow .testimonial-text.rte * {
+    font-size: 0.99em !important;
+    line-height: 1.5 !important;
+  }
+}
+@media (max-width: 540px) {
+  .testimonials-slideshow .testimonial-text.rte,
+  .testimonials-slideshow .testimonial-text.rte * {
+    font-size: 0.99em !important;
+    line-height: 1.5 !important;
+  }
+}
+@media (max-width: 400px) {
+  .testimonials-slideshow .testimonial-text.rte,
+  .testimonials-slideshow .testimonial-text.rte * {
+    font-size: 0.99em !important;
+    line-height: 1.5 !important;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.testimonials-slideshow').forEach(section => {
+    const slides = section.querySelectorAll('.testimonial-slide');
+    const blurbs = section.querySelectorAll('.testimonial-blurb');
+    const dots = section.querySelectorAll('.testimonial-dot');
+    const container = section.querySelector('.testimonial-slides');
+    const autorotate = container?.dataset.autorotate === 'true';
+    const interval = parseInt(container?.dataset.interval || 5000, 10);
+
+    let current = 0;
+    let timer;
+
+    function updateDots(index) {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+        const ring = dot.querySelector('.ring-progress');
+        if (i === index && autorotate) {
+          // animate countdown
+          ring.style.transitionDuration = interval + 'ms';
+          ring.style.strokeDashoffset = 0;
+        } else {
+          // reset ring
+          ring.style.transitionDuration = '0ms';
+          ring.style.strokeDashoffset = 62.8;
+        }
+      });
+    }
+
+    function showSlide(index) {
+      if (!slides.length) return;
+      slides.forEach(s => s.classList.remove('active'));
+      blurbs.forEach(b => b.classList.remove('active'));
+      slides[index].classList.add('active');
+      if (blurbs[index]) blurbs[index].classList.add('active');
+      updateDots(index);
+      current = index;
+    }
+
+    function nextSlide() {
+      const next = (current + 1) % slides.length;
+      showSlide(next);
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      if (autorotate && slides.length > 1) {
+        timer = setInterval(nextSlide, interval);
+      }
+    }
+
+    blurbs.forEach((blurb, idx) => {
+      blurb.addEventListener('click', () => {
+        showSlide(idx);
+        resetTimer();
+      });
+      blurb.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          blurb.click();
+        }
+      });
+    });
+
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        showSlide(idx);
+        resetTimer();
+      });
+    });
+
+    // init
+    showSlide(0);
+    resetTimer();
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Testimonials Slideshow",
+  "settings": [
+    { "type": "checkbox", "id": "autorotate", "label": "Auto-rotate testimonials", "default": true },
+    { "type": "range", "id": "interval", "label": "Slide interval (seconds)", "min": 3, "max": 15, "step": 1, "default": 5 },
+
+    { "type": "color", "id": "section_bg_color", "label": "Background color (Entire Section)", "default": "#ffffff" },
+    { "type": "range", "id": "section_margin_top_bottom", "label": "Section margin (top/bottom)", "min": 0, "max": 200, "step": 5, "default": 40 },
+
+    { "type": "html", "id": "section_title", "label": "Section title (Custom HTML)" },
+
+    { "type": "color", "id": "left_bg_color", "label": "Background color (Full Testimonial section)", "default": "#f9f9f9" },
+    { "type": "range", "id": "left_radius", "label": "Corner radius for LEFT (top-right & bottom-left only)", "min": 0, "max": 50, "step": 1, "default": 0 },
+
+    { "type": "range", "id": "left_padding_top_bottom", "label": "Left section padding (top/bottom)", "min": 0, "max": 100, "step": 5, "default": 20 },
+    { "type": "range", "id": "left_padding_left_right", "label": "Left section padding (left/right)", "min": 0, "max": 100, "step": 5, "default": 20 },
+    { "type": "range", "id": "left_margin_top_bottom", "label": "Left section margin (top/bottom)", "min": 0, "max": 100, "step": 5, "default": 0 },
+    { "type": "range", "id": "left_margin_left_right", "label": "Left section margin (left/right)", "min": 0, "max": 100, "step": 5, "default": 0 },
+
+    { "type": "color", "id": "blurb_bg_color", "label": "Background color (Active Blurb)", "default": "#ffffff" },
+    { "type": "range", "id": "blurb_radius", "label": "Rounded corners (Blurb items)", "min": 0, "max": 50, "step": 1, "default": 8 },
+    { "type": "range", "id": "blurb_margin_top_bottom", "label": "Blurb margin (top/bottom)", "min": 0, "max": 50, "step": 2, "default": 8 },
+    { "type": "range", "id": "blurb_margin_left_right", "label": "Blurb margin (left/right)", "min": 0, "max": 50, "step": 2, "default": 0 },
+    { "type": "range", "id": "blurb_padding_top_bottom", "label": "Blurb padding (top/bottom)", "min": 0, "max": 50, "step": 2, "default": 12 },
+    { "type": "range", "id": "blurb_padding_left_right", "label": "Blurb padding (left/right)", "min": 0, "max": 50, "step": 2, "default": 12 },
+
+    { "type": "range", "id": "quote_size", "label": "Quote icon size (px)", "min": 24, "max": 200, "step": 2, "default": 84 },
+    { "type": "range", "id": "quote_overlap", "label": "Quote vertical overlap outside corner (px)", "min": 0, "max": 120, "step": 2, "default": 36 }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Author image" },
+        { "type": "liquid", "id": "full_testimonial_html", "label": "Full testimonial (Custom HTML)" },
+        { "type": "liquid", "id": "blurb_html", "label": "Short blurb (Custom HTML)" }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [{ "name": "Testimonials Slideshow", "category": "Testimonials" }]
+}
+{% endschema %}

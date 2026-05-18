@@ -1,0 +1,149 @@
+{%- comment -%}
+  Renders product variant-picker
+
+  Customization:
+  - Only show variant picker to logged-in customers tagged 'retailer'
+  - Hide all variant option selectors for public visitors or non-retailer accounts
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+
+  Usage:
+  {%- render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id -%}
+{%- endcomment -%}
+
+{%- unless product.has_only_default_variant -%}
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    data-section="{{ section.id }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = block.settings.picker_type
+
+        if swatch_count > 0 and block.settings.swatch_shape != 'none'
+          if block.settings.picker_type == 'dropdown'
+            assign picker_type = 'swatch_dropdown'
+          else
+            assign picker_type = 'swatch'
+          endif
+        endif
+      -%}
+
+      {%- if picker_type == 'swatch' -%}
+        <fieldset class="js product-form__input product-form__input--swatch">
+          <legend class="form__label">
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
+          {%- render 'swatch-input',
+            option: option,
+            block: block,
+            product_form_id: product_form_id,
+            picker_type: picker_type
+          -%}
+        </fieldset>
+      {%- elsif picker_type == 'swatch_dropdown' -%}
+        <div class="product-form__input product-form__input--dropdown">
+          <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </label>
+          <div class="select">
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {%- render 'product-variant-options',
+                product: product,
+                option: option,
+                block: block,
+                picker_type: picker_type
+              -%}
+            </select>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </div>
+        </div>
+      {%- else -%}
+        <fieldset class="js product-form__input product-form__input--pill">
+          <legend class="form__label">
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
+          <div class="product-form__input-pill-wrapper">
+            {%- for value in option.values -%}
+              {%- liquid
+                assign option_disabled = true
+                for variant in product.variants
+                  if variant.option1 == option.values[0] or option.position != 1
+                    if variant.option2 == option.values[1] or option.position != 2
+                      if variant.option3 == option.values[2] or option.position != 3
+                        if variant.available
+                          if variant.options contains value
+                            assign option_disabled = false
+                          endif
+                        endif
+                      endif
+                    endif
+                  endif
+                endfor
+              -%}
+              <input
+                type="radio"
+                id="{{ section.id }}-{{ option.name | escape }}-{{ forloop.index0 }}"
+                name="{{ option.name | escape }}"
+                value="{{ value | escape }}"
+                form="{{ product_form_id }}"
+                class="product-form__pill-input"
+                data-option-value-id="{{ value.id }}"
+                {% if value == option.selected_value %}checked{% endif %}
+                {% if option_disabled %}disabled{% endif %}
+              >
+              {%- if option.name == 'Heater' -%}
+                {%- assign heater_img_name = value | handleize | prepend: 'heater-' | append: '.jpg' -%}
+                <label
+                  class="product-form__pill-label product-form__heater-card-label{% if option_disabled %} product-form__pill-label--disabled{% endif %}"
+                  for="{{ section.id }}-{{ option.name | escape }}-{{ forloop.index0 }}"
+                >
+                  <img
+                    src="{{ heater_img_name | file_url }}"
+                    alt="{{ value | escape }}"
+                    class="product-form__heater-card-img"
+                    loading="lazy"
+                    onerror="this.style.display='none'"
+                  >
+                  <span>{{ value }}</span>
+                </label>
+              {%- else -%}
+                <label
+                  class="product-form__pill-label{% if option_disabled %} product-form__pill-label--disabled{% endif %}"
+                  for="{{ section.id }}-{{ option.name | escape }}-{{ forloop.index0 }}"
+                >
+                  {{ value }}
+                </label>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </fieldset>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-selects>
+{%- endunless -%}

@@ -1,0 +1,517 @@
+{% comment %}
+Section Title: Fancy Contact Form
+Description: Create beautiful forms that show users 1 question at a time.
+Created by BrandStack --> BrandStack.co
+Created: 08.29.2025
+Version 1.0 (see change log in download folder)
+Need help? Contact us at brian@brandstack.co
+(c) Copyright by BrandStack.co
+Unauthorized reproduction, alteration, distribution, or use of this code, in whole or in part, is strictly forbidden. Any violations may result in legal action to the fullest extent permitted by law.
+{% endcomment %}
+
+{% assign fc_id = section.id | replace: '_', '' | replace: '-', '' | downcase %}
+
+{% style %}
+  .fc-wrap-{{ fc_id }}{
+    background:linear-gradient({% if section.settings.bg_direction == 'vertical' %}180deg{% else %}135deg{% endif %}, {{ section.settings.bg1 }} 0%, {{ section.settings.bg2 }} 100%);
+    padding:20px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Inter,system-ui,sans-serif
+  }
+  .fc-card-{{ fc_id }}{
+    width:100%;
+    max-width:760px;
+    background:{{ section.settings.form_bg }};
+    border-radius:{{ section.settings.radius }}px;
+    box-shadow:0 20px 60px rgba(0,0,0,.12);
+    overflow:hidden;position:relative;margin:0 auto;
+  }
+  .fc-body-{{ fc_id }}{padding:56px 40px;min-height:480px;display:flex;flex-direction:column;justify-content:center}
+  .fc-q-{{ fc_id }}{display:none;opacity:0;transform:translateX(24px);transition:all .28s ease}
+  .fc-q-{{ fc_id }}.active{display:block;opacity:1;transform:translateX(0)}
+  .fc-title-{{ fc_id }}{font-size:{{ section.settings.q_size }}px;font-weight:700;color:{{ section.settings.text }};margin:0 0 24px}
+  .fc-input-{{ fc_id }},.fc-textarea-{{ fc_id }},.fc-select-{{ fc_id }}{
+    width:100%;padding:16px 0;border:none;border-bottom:2px solid {{ section.settings.input_border }};
+    background:transparent;font-size:18px;color:{{ section.settings.text }};outline:none;transition:border-color .25s ease;
+    box-shadow:none !important; -webkit-appearance:none; appearance:none;
+  }
+  .fc-input-{{ fc_id }}:focus,.fc-textarea-{{ fc_id }}:focus,.fc-select-{{ fc_id }}:focus{
+    border-bottom-color:{{ section.settings.accent }}; outline:none !important; box-shadow:none !important;
+  }
+  .fc-input-{{ fc_id }}:focus-visible,.fc-textarea-{{ fc_id }}:focus-visible,.fc-select-{{ fc_id }}:focus-visible{
+    outline:none !important; box-shadow:none !important;
+  }
+  .fc-textarea-{{ fc_id }}{min-height:120px;resize:vertical}
+  .fc-radio-group-{{ fc_id }}{display:flex;flex-direction:column;gap:14px}
+  .fc-radio-{{ fc_id }}{display:flex;align-items:center;padding:14px 16px;border:2px solid {{ section.settings.input_border }};border-radius:10px;cursor:pointer;transition:all .25s ease}
+  .fc-radio-{{ fc_id }}:hover{border-color:{{ section.settings.accent }};background:rgba({{ section.settings.accent | color_extract: 'red' }},{{ section.settings.accent | color_extract: 'green' }},{{ section.settings.accent | color_extract: 'blue' }},.06)}
+  .fc-radio-{{ fc_id }}.selected{border-color:{{ section.settings.accent }};background:rgba({{ section.settings.accent | color_extract: 'red' }},{{ section.settings.accent | color_extract: 'green' }},{{ section.settings.accent | color_extract: 'blue' }},.1)}
+  .fc-radio-{{ fc_id }} input{margin-right:10px;accent-color:{{ section.settings.accent }}}
+  .fc-nav-{{ fc_id }}{display:flex;justify-content:space-between;align-items:center;margin-top:36px}
+  .fc-btn-{{ fc_id }}{padding:14px 24px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:all .22s ease;display:inline-flex;gap:8px;align-items:center}
+  .fc-btn-primary-{{ fc_id }}{background:{{ section.settings.accent }};color:{{ section.settings.btn_text }}}
+  .fc-btn-primary-{{ fc_id }}:hover{background:{{ section.settings.btn_hover }};transform:translateY(-1px)}
+  .fc-btn-secondary-{{ fc_id }}{background:transparent;color:{{ section.settings.text }};border:1px solid {{ section.settings.input_border }}}
+  .fc-btn-secondary-{{ fc_id }}:hover{background:{{ section.settings.input_border }}}
+  .fc-btn-{{ fc_id }}:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .fc-err-{{ fc_id }}{color:{{ section.settings.error }};font-size:14px;margin-top:8px;display:none}
+  .fc-err-{{ fc_id }}.show{display:block}
+  .fc-success-{{ fc_id }}{text-align:center;display:none}
+  .fc-success-{{ fc_id }}.active{display:block}
+  .fc-success-{{ fc_id }} .icon{width:84px;height:84px;background:{{ section.settings.success }};border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+  .fc-success-{{ fc_id }} h2{font-size:28px;margin:0 0 10px;color:{{ section.settings.text }}}
+  .fc-success-{{ fc_id }} p{font-size:18px;color:{{ section.settings.text }};opacity:.85;margin:0}
+  @media (max-width:768px){.fc-body-{{ fc_id }}{padding:40px 20px}.fc-title-{{ fc_id }}{font-size:{{ section.settings.q_size | times: 0.85 }}px}.fc-input-{{ fc_id }},.fc-textarea-{{ fc_id }},.fc-select-{{ fc_id }}{font-size:16px}}
+{% endstyle %}
+
+<div id="fc-root-{{ fc_id }}" class="fc-wrap-{{ fc_id }}" data-inited="false"
+     style="padding-top:{{ section.settings.pad_top }}px;padding-bottom:{{ section.settings.pad_bottom }}px;">
+  <div class="fc-card-{{ fc_id }}">
+
+    {%- form 'contact', novalidate: 'novalidate' -%}
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="hidden" name="contact[subject]" value="{{ shop.name }} — Fancy Contact Form">
+      <textarea name="contact[body]" id="fc-body-field-{{ fc_id }}" hidden></textarea>
+
+      <div class="fc-body-{{ fc_id }}">
+        {% unless form.posted_successfully? %}
+
+          {%- assign q_index = 0 -%}
+          {% for block in section.blocks %}
+            {% if block.type == 'question' and block.settings.prompt != blank %}
+              {%- assign q_index = q_index | plus: 1 -%}
+              <div {{ block.shopify_attributes }}
+                   class="fc-q-{{ fc_id }}{% if q_index == 1 %} active{% endif %}"
+                   data-q="{{ q_index }}"
+                   data-label="{{ block.settings.prompt | escape }}"
+                   data-type="{{ block.settings.kind }}">
+                <h2 class="fc-title-{{ fc_id }}">
+                  {{ block.settings.prompt }}{% if block.settings.required and block.settings.kind != 'note' %}<span style="color:{{ section.settings.error }};">*</span>{% endif %}
+                </h2>
+
+                {% case block.settings.kind %}
+                  {% when 'text' %}
+                    <input class="fc-input-{{ fc_id }}" type="text" name="contact[q{{ q_index }}]" placeholder="{{ block.settings.placeholder }}" {% if block.settings.required %}required{% endif %}>
+                  {% when 'email' %}
+                    <input class="fc-input-{{ fc_id }}" type="email" name="contact[email]" placeholder="{{ block.settings.placeholder | default: 'name@example.com' }}" {% if block.settings.required %}required{% endif %}>
+                  {% when 'phone' %}
+                    <input class="fc-input-{{ fc_id }}" type="tel" name="contact[q{{ q_index }}]" placeholder="{{ block.settings.placeholder | default: '+1 (555) 123-4567' }}" {% if block.settings.required %}required{% endif %}>
+                  {% when 'longtext' %}
+                    <textarea class="fc-textarea-{{ fc_id }}" name="contact[q{{ q_index }}]" placeholder="{{ block.settings.placeholder }}" {% if block.settings.required %}required{% endif %}></textarea>
+                  {% when 'dropdown' %}
+                    <select class="fc-select-{{ fc_id }}" name="contact[q{{ q_index }}]" {% if block.settings.required %}required{% endif %}>
+                      <option value="">{{ block.settings.placeholder | default: 'Choose an option…' }}</option>
+                      {% assign opts = block.settings.options | split: ',' %}
+                      {% for o in opts %}{% assign ov = o | strip %}{% if ov != blank %}<option value="{{ ov }}">{{ ov }}</option>{% endif %}{% endfor %}
+                    </select>
+                  {% when 'multichoice' %}
+                    <div class="fc-radio-group-{{ fc_id }}">
+                      {% assign opts = block.settings.options | split: ',' %}
+                      {% for o in opts %}{% assign ov = o | strip %}{% if ov != blank %}
+                        <label class="fc-radio-{{ fc_id }}">
+                          <input type="radio" name="contact[q{{ q_index }}]" value="{{ ov }}" {% if block.settings.required %}required{% endif %}>
+                          <span>{{ ov }}</span>
+                        </label>
+                      {% endif %}{% endfor %}
+                    </div>
+                  {% when 'note' %}
+                    {% if block.settings.note != blank %}
+                      <div class="fc-note-{{ fc_id }}">{{ block.settings.note }}</div>
+                    {% endif %}
+                {% endcase %}
+
+                <div class="fc-err-{{ fc_id }}">{{ section.settings.error_msg }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          {% if q_index == 0 %}
+            <div class="fc-q-{{ fc_id }} active" data-q="1" data-label="Your name">
+              <h2 class="fc-title-{{ fc_id }}">Add “Question” blocks in the Theme Editor</h2>
+              <input class="fc-input-{{ fc_id }}" type="text" placeholder="Sample field">
+              <div class="fc-err-{{ fc_id }}">{{ section.settings.error_msg }}</div>
+            </div>
+          {% endif %}
+
+          <div class="fc-nav-{{ fc_id }}">
+            <button type="button" class="fc-btn-{{ fc_id }} fc-btn-secondary-{{ fc_id }}" data-prev style="visibility:hidden">{{ section.settings.back_label }}</button>
+            <button type="button" class="fc-btn-{{ fc_id }} fc-btn-primary-{{ fc_id }}" data-next>{{ section.settings.next_label }}</button>
+          </div>
+        {% endunless %}
+
+        <div class="fc-success-{{ fc_id }}{% if form.posted_successfully? %} active{% endif %}">
+          <div class="icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <h2>{{ section.settings.success_title }}</h2>
+          <p>{{ section.settings.success_message }}</p>
+        </div>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+<script>
+/* ====== HARDENED GLOBAL FALLBACKS (unchanged except labels) ====== */
+(function(){
+  const rootId = 'fc-root-{{ fc_id }}';
+  function getQs(root){ return Array.from(root.querySelectorAll('.fc-q-{{ fc_id }}')); }
+  function getActiveIndex(qs){ return Math.max(0, qs.findIndex(q=>q.classList.contains('active'))); }
+  function setActive(qs, i){
+    qs.forEach((q,idx)=> q.classList.toggle('active', idx===i));
+    const prevBtn = document.querySelector('#'+rootId+' [data-prev]');
+    const nextBtn = document.querySelector('#'+rootId+' [data-next]');
+    if (prevBtn) prevBtn.style.visibility = i>0 ? 'visible' : 'hidden';
+    if (nextBtn){
+      if (i === qs.length-1){ nextBtn.textContent='{{ section.settings.submit_label | escape }}'; nextBtn.setAttribute('type','submit'); }
+      else { nextBtn.textContent='{{ section.settings.next_label | escape }}'; nextBtn.setAttribute('type','button'); }
+    }
+  }
+  function validateAt(q){
+    let ok = true;
+    q.querySelectorAll('[required]').forEach(inp=>{
+      if (inp.type === 'radio'){
+        const group = q.querySelectorAll('input[type="radio"][name="'+inp.name+'"]');
+        if (![...group].some(r=>r.checked)) ok = false;
+      } else if (inp.type === 'email'){
+        const v = (inp.value || '').trim();
+        const emailOK = v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        if (!emailOK) ok = false;
+      } else if (!inp.value || !inp.value.trim()){ ok = false; }
+    });
+    const err = q.querySelector('.fc-err-{{ fc_id }}');
+    if (err) err.classList.toggle('show', !ok);
+    return ok;
+  }
+
+  window.fc_next_{{ fc_id }} = function(){
+    if (window._fcCtl{{ fc_id }} && typeof window._fcCtl{{ fc_id }}.next === 'function'){ window._fcCtl{{ fc_id }}.next(); return; }
+    const root = document.getElementById(rootId); if (!root) return;
+    const qs = getQs(root); if (!qs.length) return;
+    const i = getActiveIndex(qs);
+    if (!validateAt(qs[i])) return;
+    if (i < qs.length-1){ setActive(qs, i+1); } else {
+      const form = root.querySelector('form'); if (!form) return;
+      try{
+        const lines=[];
+        qs.forEach((q,idx)=>{
+          const label=q.getAttribute('data-label') || ('Question '+(idx+1));
+          let val='';
+          const t=q.querySelector('input[type="text"],input[type="tel"],input[type="email"]');
+          const ta=q.querySelector('textarea');
+          const sel=q.querySelector('select');
+          const rs=q.querySelectorAll('input[type="radio"]');
+          if (ta && ta.value.trim()) val=ta.value.trim();
+          else if (sel && sel.value) val=sel.value;
+          else if (rs.length){ const r=[...rs].find(r=>r.checked); if (r) val=r.value; }
+          else if (t && t.value && t.value.trim()) val=t.value.trim();
+          if (val) lines.push(label+': '+val);
+        });
+        const body=form.querySelector('#fc-body-field-{{ fc_id }}'); if (body) body.value=lines.join('\n');
+      }catch(e){}
+      try{
+        if (window.Shopify && Shopify.recaptchaV3 && typeof Shopify.recaptchaV3.addToken === 'function'){
+          Shopify.recaptchaV3.addToken(form,'contact').then(()=> form.submit());
+          return;
+        }
+      }catch(e){}
+      form.submit();
+    }
+  };
+  window.fc_prev_{{ fc_id }} = function(){
+    if (window._fcCtl{{ fc_id }} && typeof window._fcCtl{{ fc_id }}.prev === 'function'){ window._fcCtl{{ fc_id }}.prev(); return; }
+    const root = document.getElementById(rootId); if (!root) return;
+    const qs = getQs(root); if (!qs.length) return;
+    const i = getActiveIndex(qs);
+    if (i > 0) setActive(qs, i-1);
+  };
+})();
+</script>
+
+<script>
+(function(){
+  function initFancy{{ fc_id }}(){
+    const root = document.getElementById('fc-root-{{ fc_id }}');
+    if (!root || root.dataset.inited === 'true') return;
+    root.dataset.inited = 'true';
+
+    class Controller{
+        constructor(root){
+        this.root = root;
+        this.form = root.querySelector('form');
+        this.prevBtn = root.querySelector('[data-prev]');
+        this.nextBtn = root.querySelector('[data-next]');
+        this.success = root.querySelector('.fc-success-{{ fc_id }}');
+
+        this.refreshQuestions();
+        this.current = Math.max(0, this.questions.findIndex(q=>q.classList.contains('active')));
+
+        this.afterMode = "{{ section.settings.after_mode }}";
+        this.afterUrl  = "{{ section.settings.after_url | escape }}";
+        this.afterDelay= parseInt("{{ section.settings.after_delay }}", 10) * 1000 || 0;
+
+        // NEW: avoid initial autofocus to prevent page jumping when this section is low on the page
+        window._fc_avoidAutoFocus{{ fc_id }} = true;
+
+        window._fcCtl{{ fc_id }} = this;
+
+        if (this.success && this.success.classList.contains('active')) {
+          this.questions.forEach(q => q.style.display='none');
+          const nav = root.querySelector('.fc-nav-{{ fc_id }}'); if (nav) nav.style.display='none';
+          return;
+        }
+
+        if (this.total > 0) {
+          this.bind();
+          if (this.current < 0) this.current = 0;
+          this.show(this.current);
+        }
+      }
+
+      refreshQuestions(){
+        this.questions = Array.from(this.root.querySelectorAll('.fc-q-{{ fc_id }}'));
+        this.total = this.questions.length || 0;
+      }
+
+      bind(){
+        if (this.prevBtn) this.prevBtn.removeAttribute('onclick');
+        if (this.nextBtn) this.nextBtn.removeAttribute('onclick');
+
+        this.prevBtn && this.prevBtn.addEventListener('click', (e)=>{ 
+          e.preventDefault(); e.stopPropagation();
+          window._fc_avoidAutoFocus{{ fc_id }} = false; /* user interacted */
+          this.prev(); 
+        });
+        this.nextBtn && this.nextBtn.addEventListener('click', (e)=>{ 
+          e.preventDefault(); e.stopPropagation();
+          window._fc_avoidAutoFocus{{ fc_id }} = false; /* user interacted */
+          this.next(); 
+        });
+
+        // First interaction anywhere inside the form clears the avoid-focus flag
+        this.root.addEventListener('pointerdown', ()=>{ window._fc_avoidAutoFocus{{ fc_id }} = false; }, { once:true });
+
+        this.questions.forEach(q=>{
+          q.querySelectorAll('input,select,textarea').forEach(inp=>{
+            try{
+              inp.addEventListener('keydown', (e)=>{
+                window._fc_avoidAutoFocus{{ fc_id }} = false; /* user interacted */
+                if (e.key === 'Enter' && e.target.tagName.toLowerCase() !== 'textarea'){
+                  e.preventDefault();
+                  if (this.current < this.total - 1) { this.next(); }
+                  else { this.buildBody(); this.form.requestSubmit(); }
+                }
+              });
+              if (inp.type === 'radio'){
+                inp.addEventListener('change', ()=>{
+                  window._fc_avoidAutoFocus{{ fc_id }} = false;
+                  const label = inp.closest('.fc-radio-{{ fc_id }}');
+                  q.querySelectorAll('.fc-radio-{{ fc_id }}').forEach(l=>l.classList.remove('selected'));
+                  label && label.classList.add('selected');
+                });
+              }
+            }catch(err){}
+          });
+        });
+
+        this.form.addEventListener('submit',(e)=>{
+          if (this.current !== this.total-1){
+            e.preventDefault(); this.next();
+          } else { this.buildBody(); }
+        });
+      }
+
+      show(i){
+        this.refreshQuestions();
+        if (i < 0) i = 0;
+        if (i > this.total - 1) i = this.total - 1;
+        this.questions.forEach((q,idx)=> q.classList.toggle('active', idx===i));
+        this.prevBtn && (this.prevBtn.style.visibility = i>0 ? 'visible' : 'hidden');
+        if (this.nextBtn){
+          if (i === this.total-1){ this.nextBtn.textContent='{{ section.settings.submit_label | escape }}'; this.nextBtn.setAttribute('type','submit'); }
+          else { this.nextBtn.textContent='{{ section.settings.next_label | escape }}'; this.nextBtn.setAttribute('type','button'); }
+        }
+        // Only focus after the user has interacted at least once
+        const first = this.questions[i]?.querySelector('input,select,textarea');
+        if (!window._fc_avoidAutoFocus{{ fc_id }} && first){ setTimeout(()=>first.focus(), 80); }
+        this.current = i;
+      }
+
+      validate(){
+        const q = this.questions[this.current];
+        if (!q) return true;
+        const req = q.querySelectorAll('[required]');
+        let ok = true;
+        req.forEach(inp=>{
+          if (inp.type === 'radio'){
+            const group = q.querySelectorAll(⁠ input[name="${inp.name}"] ⁠);
+            if (![...group].some(r=>r.checked)) ok = false;
+          } else if (inp.type === 'email'){
+            const v = (inp.value || '').trim();
+            const emailOK = v && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+            if (!emailOK) ok = false;
+          } else if (!inp.value || !inp.value.trim()){
+            ok = false;
+          }
+        });
+        const err = q.querySelector('.fc-err-{{ fc_id }}');
+        err && err.classList.toggle('show', !ok);
+        return ok;
+      }
+
+      next(){
+        if (!this.validate()) return;
+        if (this.current < this.total-1){
+          this.show(this.current+1);
+        } else {
+          const email = this.form.querySelector('input[type="email"][name="contact[email]"]');
+          if (email){
+            const v = (email.value || '').trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){
+              // Show inline error on the email question and jump back to it
+              const qEl = email.closest('.fc-q-{{ fc_id }}');
+              if (qEl){
+                const idx = this.questions.indexOf(qEl);
+                if (idx !== -1) this.show(idx);
+                const err = qEl.querySelector('.fc-err-{{ fc_id }}');
+                if (err) err.classList.add('show');
+                // Focus the email input for correction
+                setTimeout(()=> email.focus(), 60);
+              }
+              return;
+            }
+          }
+          this.buildBody();
+          try{
+            if (window.Shopify && Shopify.recaptchaV3 && typeof Shopify.recaptchaV3.addToken === 'function'){
+              Shopify.recaptchaV3.addToken(this.form,'contact').then(()=> this.form.submit());
+              return;
+            }
+          }catch(e){}
+          this.form.submit();
+        }
+      }
+
+      prev(){
+        if (this.current>0){
+          this.show(this.current-1);
+        }
+      }
+
+      buildBody(){
+        const lines=[];
+        this.questions.forEach((q,idx)=>{
+          const label=q.getAttribute('data-label') || ('Question '+(idx+1));
+          let val='';
+          const t=q.querySelector('input[type="text"],input[type="tel"],input[type="email"]');
+          const ta=q.querySelector('textarea');
+          const sel=q.querySelector('select');
+          const radios=q.querySelectorAll('input[type="radio"]');
+          if (ta && ta.value.trim()) val=ta.value.trim();
+          else if (sel && sel.value) val=sel.value;
+          else if (radios.length){ const r=[...radios].find(r=>r.checked); if (r) val=r.value; }
+          else if (t && t.value && t.value.trim()) val=t.value.trim();
+          if (val) lines.push(label+': '+val);
+        });
+        const body=this.form.querySelector('#fc-body-field-{{ fc_id }}');
+        body && (body.value=lines.join('\n'));
+      }
+    }
+
+    new Controller(root);
+  }
+
+  if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', initFancy{{ fc_id }}); }
+  else { initFancy{{ fc_id }}(); }
+
+  document.addEventListener('shopify:section:load', e=>{
+    if (e && e.target && e.target.id === 'shopify-section-{{ section.id }}'){ initFancy{{ fc_id }}(); }
+  });
+  document.addEventListener('shopify:section:select', e=>{
+    if (e && e.target && e.target.id === 'shopify-section-{{ section.id }}'){ initFancy{{ fc_id }}(); }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Fancy Contact Form",
+  "max_blocks": 30,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "⚠️ IMPORTANT: TO RECEIVE FORM SUBMISSIONS, YOU MUST INCLUDE AT LEAST ONE EMAIL FIELD IN YOUR QUESTIONS ⚠️"
+    },
+    {
+      "type": "paragraph",
+      "content": "Shopify will send all submissions to the store owner’s email address (the primary contact email set in your Shopify admin under Settings → Store details → Contact information). Without an email field, submissions cannot be delivered."
+    },
+    { "type": "header", "content": "Style" },
+    { "type": "color", "id": "bg1", "label": "Background color 1", "default": "#667eea" },
+    { "type": "color", "id": "bg2", "label": "Background color 2", "default": "#764ba2" },
+    { "type": "select", "id": "bg_direction", "label": "Background gradient direction", "options": [
+      { "value": "diagonal", "label": "Diagonal (default)" },
+      { "value": "vertical", "label": "Vertical (top to bottom)" }
+    ], "default": "diagonal" },
+    { "type": "color", "id": "form_bg", "label": "Form background", "default": "#ffffff" },
+    { "type": "color", "id": "text", "label": "Text color", "default": "#2d3748" },
+    { "type": "color", "id": "accent", "label": "Accent color", "default": "#667eea" },
+    { "type": "color", "id": "btn_text", "label": "Button text color", "default": "#ffffff" },
+    { "type": "color", "id": "btn_hover", "label": "Button hover color", "default": "#5a67d8" },
+    { "type": "color", "id": "input_border", "label": "Input border color", "default": "#e2e8f0" },
+    { "type": "color", "id": "success", "label": "Success icon color", "default": "#48bb78" },
+    { "type": "color", "id": "error", "label": "Error color", "default": "#f56565" },
+    { "type": "range", "id": "radius", "label": "Card radius", "min": 0, "max": 30, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "q_size", "label": "Question font size", "min": 20, "max": 40, "step": 2, "unit": "px", "default": 28 },
+    { "type": "range", "id": "pad_top", "label": "Top padding", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "pad_bottom", "label": "Bottom padding", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40 },
+
+    { "type": "header", "content": "After submission" },
+    { "type": "select", "id": "after_mode", "label": "After submit", "options": [
+      { "value": "success", "label": "Show success message" },
+      { "value": "redirect", "label": "Redirect to URL" }
+    ], "default": "success" },
+    { "type": "url", "id": "after_url", "label": "Redirect URL (if Redirect selected)" },
+    { "type": "range", "id": "after_delay", "label": "Redirect delay (seconds)", "min": 0, "max": 10, "step": 1, "default": 0 },
+
+    { "type": "header", "content": "Success message" },
+    { "type": "text", "id": "success_title", "label": "Title", "default": "Thank you!" },
+    { "type": "text", "id": "success_message", "label": "Message", "default": "We've received your message and will get back to you soon." },
+
+    { "type": "text", "id": "submit_label", "label": "Submit button text", "default": "Submit" },
+    { "type": "text", "id": "next_label", "label": "Next button text", "default": "Next →" },
+    { "type": "text", "id": "back_label", "label": "Back button text", "default": "← Back" },
+    { "type": "text", "id": "error_msg", "label": "Required field message", "default": "This field is required" }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "prompt", "label": "Question text", "default": "Your question" },
+        { "type": "select", "id": "kind", "label": "Type", "options": [
+          { "value": "text", "label": "Text" },
+          { "value": "email", "label": "Email" },
+          { "value": "phone", "label": "Phone" },
+          { "value": "longtext", "label": "Long Text" },
+          { "value": "dropdown", "label": "Dropdown" },
+          { "value": "multichoice", "label": "Multiple Choice" },
+          { "value": "note", "label": "Announcement / Text Only" }
+        ], "default": "text" },
+        { "type": "checkbox", "id": "required", "label": "Required", "default": false },
+        { "type": "text", "id": "placeholder", "label": "Placeholder (optional)" },
+        { "type": "textarea", "id": "options", "label": "Options (Dropdown/Multiple Choice)", "info": "Separate options with commas" },
+        { "type": "richtext", "id": "note", "label": "Announcement content (only used when Type = Announcement)", "default": "<p>Add your announcement text here.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fancy Contact Form",
+      "blocks": [
+        { "type": "question", "settings": { "prompt": "What's your email address?", "kind": "email", "required": true } },
+        { "type": "question", "settings": { "prompt": "What's your name?", "kind": "text", "required": true } },
+        { "type": "question", "settings": { "prompt": "How can we help you?", "kind": "longtext", "required": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

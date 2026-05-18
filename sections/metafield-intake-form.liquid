@@ -1,0 +1,105 @@
+{% comment %}
+Minimal, unstyled intake form with a 2-step flow:
+Step 1: ask for "code" (product ID)
+Step 2: reveal the 20-field form; on submit, POST to /apps/metafield-writer
+NOTE: Do NOT expose any API keys in this file. The write happens via your app proxy.
+{% endcomment %}
+
+<div id="step1">
+  <p>Please enter the code that was given to you:</p>
+  <input type="text" id="product_id_input" placeholder="Enter code" required>
+  <button id="check_code" type="button">Continue</button>
+</div>
+
+<div id="step2" style="display:none;">
+  <form id="metafield-form">
+    <input type="hidden" name="product_id" id="product_id">
+
+    {%- comment -%}
+      Replace these sample fields with your ~20 inputs.
+      The JS will automatically turn any input/textarea/select with a `name`
+      into a metafield { namespace:'custom', key:<name>, value:<value>, type:'single_line_text_field' }.
+      You can change types later.
+    {%- endcomment -%}
+    <label>Project Name</label>
+    <input type="text" name="project_name" required>
+
+    <label>Dimensions</label>
+    <input type="text" name="dimensions" required>
+
+    <label>Notes</label>
+    <textarea name="notes"></textarea>
+
+    <!-- duplicate pattern up to 20 fields … -->
+
+    <button type="submit" id="save_btn">Save</button>
+  </form>
+  <div id="status" aria-live="polite"></div>
+</div>
+
+<script>
+  // Step 1 -> Step 2 (basic code validation: numeric)
+  document.getElementById('check_code').addEventListener('click', () => {
+    const code = (document.getElementById('product_id_input').value || '').trim();
+    if (/^\d+$/.test(code)) {
+      document.getElementById('product_id').value = code;
+      document.getElementById('step1').style.display = 'none';
+      document.getElementById('step2').style.display = 'block';
+    } else {
+      alert('Invalid code. Please enter the numeric code you were given.');
+    }
+  });
+
+  // Submit all fields together to your app proxy
+  document.getElementById('metafield-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const statusEl = document.getElementById('status');
+    const saveBtn = document.getElementById('save_btn');
+
+    const formData = new FormData(form);
+    const productId = formData.get('product_id');
+
+    // Build metafields array from all named inputs except product_id
+    const metafields = [];
+    for (const [key, value] of formData.entries()) {
+      if (key === 'product_id') continue;
+      // Empty strings still get saved; change this if you want to skip empties
+      metafields.push({
+        namespace: 'custom',
+        key: key,
+        type: 'single_line_text_field',
+        value: String(value ?? '')
+      });
+    }
+
+    saveBtn.disabled = true;
+    statusEl.textContent = 'Saving…';
+
+    try {
+      const res = await fetch('/apps/metafield-writer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId, metafields })
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(err || 'Request failed');
+      }
+      const data = await res.json();
+
+      if (data.errors || (data.userErrors && data.userErrors.length)) {
+        statusEl.textContent = 'Some fields failed to save. See console.';
+        console.error('metafieldsSet errors:', data);
+      } else {
+        statusEl.textContent = 'Saved!';
+      }
+    } catch (err) {
+      statusEl.textContent = 'Something went wrong. See console.';
+      console.error(err);
+    } finally {
+      saveBtn.disabled = false;
+    }
+  });
+</script>
