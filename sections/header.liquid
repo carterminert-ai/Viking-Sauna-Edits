@@ -299,6 +299,10 @@
         {%- endif -%}
       </div>
 
+        {%- if section.settings.enable_contact_button -%}
+          <a href="{{ section.settings.contact_button_link }}" class="header__additional-button button button--primary">{{ section.settings.contact_button_label }}</a>
+        {%- endif -%}
+
         {%- if section.settings.enable_additional_button -%}
           <a href="{{ section.settings.additional_button_link }}" class="header__additional-button button button--primary">{{ section.settings.additional_button_label }}</a>
         {%- endif -%}
@@ -684,6 +688,27 @@
       "default": true,
       "label": "t:sections.header.settings.enable_customer_avatar.label",
       "info": "t:sections.header.settings.enable_customer_avatar.info"
+    },
+    {
+      "type": "header",
+      "content": "Contact Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_contact_button",
+      "label": "Enable Contact Button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "contact_button_label",
+      "label": "Contact Button Label",
+      "default": "Contact Us"
+    },
+    {
+      "type": "url",
+      "id": "contact_button_link",
+      "label": "Contact Button Link"
     },
     {
       "type": "header",
