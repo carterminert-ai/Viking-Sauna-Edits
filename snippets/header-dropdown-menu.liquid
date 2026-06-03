@@ -99,6 +99,13 @@
           </a>
         {%- endif -%}
       </li>
+      {%- if forloop.index == 1 -%}
+        <li>
+          <a href="/collections/heaters" class="header__menu-item list-menu__item link link--text focus-inset">
+            <span>Heaters</span>
+          </a>
+        </li>
+      {%- endif -%}
     {%- endfor -%}
   </ul>
 </nav>
