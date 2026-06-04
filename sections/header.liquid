@@ -86,6 +86,24 @@
   }
 }
 
+  .header__contact-button {
+    margin-right: 1.2rem;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    text-decoration: none;
+    font-size: var(--font-body-size);
+    color: currentColor;
+    align-self: center;
+    display: flex;
+    align-items: center;
+  }
+
+  .header__contact-button:hover {
+    text-decoration: underline;
+  }
+
 </style>
 
 {%- style -%}
@@ -299,13 +317,11 @@
         {%- endif -%}
       </div>
 
-        {%- if section.settings.enable_contact_button -%}
-          <a href="{{ section.settings.contact_button_link }}" class="header__additional-button button button--primary">{{ section.settings.contact_button_label }}</a>
-        {%- endif -%}
+      <a href="/pages/contact" class="header__contact-button">Contact Us</a>
 
-        {%- if section.settings.enable_additional_button -%}
-          <a href="{{ section.settings.additional_button_link }}" class="header__additional-button button button--primary">{{ section.settings.additional_button_label }}</a>
-        {%- endif -%}
+      {%- if section.settings.enable_additional_button -%}
+        <a href="{{ section.settings.additional_button_link }}" class="header__additional-button button button--primary">{{ section.settings.additional_button_label }}</a>
+      {%- endif -%}
 
       {%- if shop.customer_accounts_enabled -%}
         <a
