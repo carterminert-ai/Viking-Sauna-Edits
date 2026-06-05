@@ -3822,19 +3822,39 @@ details-disclosure > details {
   height: 150px !important;
   width: auto !important;
   max-width: none !important;
+  display: block !important;
 }
 
-/* Remove all padding around the header nav so it hugs the logo */
+/* Strip every pixel of extra space from the header */
 .section-header .header.page-width {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
+  align-items: center !important;
 }
 .header__heading {
   margin: 0 !important;
   padding: 0 !important;
+  line-height: 0 !important;
 }
 .header__heading-link {
   padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+  display: block !important;
+}
+.header__heading-logo-wrapper {
+  line-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.header__icons {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  align-self: center !important;
+}
+.header__menu-item.list-menu__item--link {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 
 /* Norse corner bracket marks on multirow image panels (real images only) */
