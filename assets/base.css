@@ -3817,6 +3817,13 @@ details-disclosure > details {
   border-bottom: 2px solid rgba(201, 164, 90, 0.3);
 }
 
+/* Logo: fixed height so header stays compact, width scales automatically */
+.header__heading-logo {
+  height: 56px !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
 /* Norse corner bracket marks on multirow image panels (real images only) */
 .image-with-text__media:not(.image-with-text__media--placeholder) {
   position: relative;
