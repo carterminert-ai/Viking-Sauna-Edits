@@ -3683,6 +3683,10 @@ details-disclosure > details {
   background: #ffffff !important;
 }
 
+.slideshow__controls {
+  display: none !important;
+}
+
 /* === End Viking Wood Grain Texture === */
 
 /* === Viking Aesthetic Elements === */
