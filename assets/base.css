@@ -3819,7 +3819,7 @@ details-disclosure > details {
 
 /* Logo: fixed height so header stays compact, width scales automatically */
 .header__heading-logo {
-  height: 100px !important;
+  height: 150px !important;
   width: auto !important;
   max-width: none !important;
 }
