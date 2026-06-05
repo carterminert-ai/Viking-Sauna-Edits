@@ -3687,6 +3687,11 @@ details-disclosure > details {
   display: none !important;
 }
 
+.card__inner {
+  aspect-ratio: 1 / 1 !important;
+  padding-bottom: 0 !important;
+}
+
 /* === End Viking Wood Grain Texture === */
 
 /* === Viking Aesthetic Elements === */
