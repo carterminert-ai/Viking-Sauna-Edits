@@ -156,7 +156,7 @@
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "background": "#f4ede0",
+          "background": "#ffffff",
           "background_gradient": "",
           "text": "#1a1a18",
           "button": "#c9a45a",
@@ -167,11 +167,11 @@
       },
       "scheme-2": {
         "settings": {
-          "background": "#e8dfd0",
+          "background": "#f7f7f5",
           "background_gradient": "",
           "text": "#1a1a18",
           "button": "#1a1a18",
-          "button_label": "#f4ede0",
+          "button_label": "#ffffff",
           "secondary_button_label": "#1a1a18",
           "shadow": "#1a1a18"
         }
