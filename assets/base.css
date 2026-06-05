@@ -3817,11 +3817,24 @@ details-disclosure > details {
   border-bottom: 2px solid rgba(201, 164, 90, 0.3);
 }
 
-/* Logo: fixed height so header stays compact, width scales automatically */
+/* Logo: fixed height, width scales automatically */
 .header__heading-logo {
   height: 150px !important;
   width: auto !important;
   max-width: none !important;
+}
+
+/* Remove all padding around the header nav so it hugs the logo */
+.section-header .header.page-width {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.header__heading {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.header__heading-link {
+  padding: 0 !important;
 }
 
 /* Norse corner bracket marks on multirow image panels (real images only) */
