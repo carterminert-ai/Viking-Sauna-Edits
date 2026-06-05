@@ -1,0 +1,143 @@
+<style>
+  .quiz-btn {
+    width: 100%;
+    background: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 0.97rem;
+    color: #1a1a18;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .quiz-btn:hover {
+    border-color: #c9a45a;
+    background: #fdf9f3;
+  }
+</style>
+
+<section style="background:#f7f7f5; padding:64px 20px; border-top:1px solid #ebebeb; border-bottom:1px solid #ebebeb;">
+  <div style="max-width:660px; margin:0 auto; text-align:center;">
+
+    <!-- Intro -->
+    <div id="quiz-intro">
+      <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(201,164,90,0.12); border:1.5px solid #c9a45a; border-radius:50px; padding:5px 16px; font-size:0.78rem; font-weight:700; letter-spacing:0.1em; color:#8a6e35; margin-bottom:18px;">2 MINUTE QUIZ</div>
+      <h2 style="font-size:1.9rem; color:#1a1a18; margin:0 0 10px;">Not Sure Which Sauna Is Right For You?</h2>
+      <p style="color:#666; font-size:0.97rem; margin:0 0 28px; line-height:1.7;">Answer 3 quick questions and we'll match you with the perfect model.</p>
+      <button onclick="startQuiz()" style="background:#c9a45a; border:none; border-radius:50px; padding:14px 36px; font-size:1rem; font-weight:700; color:#1a1a18; cursor:pointer; letter-spacing:0.03em; font-family:inherit;">Find My Sauna &rarr;</button>
+    </div>
+
+    <!-- Steps -->
+    <div id="quiz-steps" style="display:none;">
+      <div style="display:flex; justify-content:center; gap:8px; margin-bottom:36px;">
+        <div id="qp1" style="width:36px; height:4px; border-radius:4px; background:#c9a45a;"></div>
+        <div id="qp2" style="width:36px; height:4px; border-radius:4px; background:#ddd;"></div>
+        <div id="qp3" style="width:36px; height:4px; border-radius:4px; background:#ddd;"></div>
+      </div>
+
+      <div id="step-1">
+        <p style="font-size:0.75rem; letter-spacing:0.12em; color:#aaa; font-weight:700; margin:0 0 10px;">QUESTION 1 OF 3</p>
+        <h3 style="font-size:1.45rem; color:#1a1a18; margin:0 0 24px; font-weight:700;">How many people will use the sauna?</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="quiz-btn" onclick="pickAnswer(1,'small')">Just myself or with a partner &nbsp;<span style="color:#bbb;">(1–2 people)</span></button>
+          <button class="quiz-btn" onclick="pickAnswer(1,'medium')">Small family or friends &nbsp;<span style="color:#bbb;">(3–4 people)</span></button>
+          <button class="quiz-btn" onclick="pickAnswer(1,'large')">Larger gatherings &nbsp;<span style="color:#bbb;">(5+ people)</span></button>
+        </div>
+      </div>
+
+      <div id="step-2" style="display:none;">
+        <p style="font-size:0.75rem; letter-spacing:0.12em; color:#aaa; font-weight:700; margin:0 0 10px;">QUESTION 2 OF 3</p>
+        <h3 style="font-size:1.45rem; color:#1a1a18; margin:0 0 24px; font-weight:700;">What style appeals to you?</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="quiz-btn" onclick="pickAnswer(2,'barrel')">Classic barrel shape &mdash; iconic, efficient, timeless</button>
+          <button class="quiz-btn" onclick="pickAnswer(2,'pod')">Modern cabin/pod &mdash; spacious interior, clean lines</button>
+        </div>
+      </div>
+
+      <div id="step-3" style="display:none;">
+        <p style="font-size:0.75rem; letter-spacing:0.12em; color:#aaa; font-weight:700; margin:0 0 10px;">QUESTION 3 OF 3</p>
+        <h3 style="font-size:1.45rem; color:#1a1a18; margin:0 0 24px; font-weight:700;">What matters most to you?</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="quiz-btn" onclick="pickAnswer(3,'speed')">Heats up fast &mdash; I want it ready in minutes</button>
+          <button class="quiz-btn" onclick="pickAnswer(3,'space')">Maximum interior space</button>
+          <button class="quiz-btn" onclick="pickAnswer(3,'value')">Best value for the price</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="quiz-result" style="display:none;">
+      <p style="font-size:0.78rem; letter-spacing:0.12em; color:#c9a45a; font-weight:700; margin:0 0 6px;">YOUR MATCH</p>
+      <h3 id="result-name" style="font-size:1.6rem; color:#1a1a18; margin:0 0 14px; font-weight:700;"></h3>
+      <p id="result-desc" style="color:#555; font-size:0.97rem; line-height:1.75; margin:0 0 28px;"></p>
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a id="result-link" href="#" style="background:#c9a45a; border-radius:50px; padding:13px 30px; font-size:0.95rem; font-weight:700; color:#1a1a18; text-decoration:none; letter-spacing:0.03em;">View This Sauna &rarr;</a>
+        <button onclick="resetQuiz()" style="background:transparent; border:1.5px solid #ddd; border-radius:50px; padding:13px 24px; font-size:0.9rem; color:#999; cursor:pointer; font-family:inherit;">Retake Quiz</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  var quizAnswers = {};
+  var saunas = {
+    leif:   { name: 'The Leif 2-Person Outdoor Sauna Pod',      url: '/search?q=leif&type=product',   desc: 'Compact, efficient, and built for two. The Leif delivers the full Viking sauna experience in a smaller footprint — perfect for backyards, garages, or anyone who values a more intimate session.' },
+    ragnar: { name: 'The Ragnar 4-Person Outdoor Barrel Sauna', url: '/search?q=ragnar&type=product', desc: 'Our most popular model. The classic barrel shape heats faster than any rectangular design and holds heat beautifully — making every session feel effortless. A crowd favorite for good reason.' },
+    erik:   { name: 'The Erik 4-Person Outdoor Sauna Pod',      url: '/search?q=erik&type=product',   desc: 'The premium pod-style sauna with a walk-in interior and modern cabin aesthetic. Built for those who want maximum comfort and a sauna that looks as great as it performs.' },
+    bjorn:  { name: 'The Bjorn Outdoor Sauna',                  url: '/search?q=bjorn&type=product',  desc: 'Our most expansive model — built for larger groups who refuse to compromise on space. The Bjorn is engineered for serious sauna enthusiasts who want room to stretch out.' }
+  };
+
+  function startQuiz() {
+    document.getElementById('quiz-intro').style.display = 'none';
+    document.getElementById('quiz-steps').style.display = 'block';
+  }
+
+  function pickAnswer(step, choice) {
+    quizAnswers[step] = choice;
+    document.getElementById('step-' + step).style.display = 'none';
+    if (step < 3) {
+      document.getElementById('step-' + (step + 1)).style.display = 'block';
+      document.getElementById('qp' + (step + 1)).style.background = '#c9a45a';
+    } else {
+      document.getElementById('quiz-steps').style.display = 'none';
+      showResult();
+    }
+  }
+
+  function getRecommendation() {
+    var size = quizAnswers[1], style = quizAnswers[2], priority = quizAnswers[3];
+    if (size === 'large') return 'bjorn';
+    if (size === 'medium') return style === 'barrel' ? 'ragnar' : 'erik';
+    if (style === 'barrel') return 'ragnar';
+    if (priority === 'space') return 'erik';
+    return 'leif';
+  }
+
+  function showResult() {
+    var s = saunas[getRecommendation()];
+    document.getElementById('result-name').textContent = s.name;
+    document.getElementById('result-desc').textContent = s.desc;
+    document.getElementById('result-link').href = s.url;
+    document.getElementById('quiz-result').style.display = 'block';
+  }
+
+  function resetQuiz() {
+    quizAnswers = {};
+    document.getElementById('quiz-result').style.display = 'none';
+    document.getElementById('quiz-intro').style.display = 'block';
+    ['qp2','qp3'].forEach(function(id){ document.getElementById(id).style.background = '#ddd'; });
+    for (var i = 1; i <= 3; i++) document.getElementById('step-' + i).style.display = i === 1 ? 'block' : 'none';
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Sauna Quiz",
+  "tag": "section",
+  "settings": [],
+  "presets": [{ "name": "Sauna Quiz" }]
+}
+{% endschema %}
