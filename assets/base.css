@@ -3671,8 +3671,7 @@ details-disclosure > details {
 }
 
 .gradient.color-scheme-3 {
-  background: #2d3a28 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75 0.08' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E") repeat !important;
-  background-size: 300px 300px !important;
+  background: #f2f7f2 !important;
 }
 
 .gradient.color-scheme-4 {
@@ -3681,8 +3680,7 @@ details-disclosure > details {
 }
 
 .gradient.color-scheme-5 {
-  background: #1a241a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75 0.08' numOctaves='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E") repeat !important;
-  background-size: 300px 300px !important;
+  background: #ffffff !important;
 }
 
 /* === End Viking Wood Grain Texture === */
@@ -3722,9 +3720,7 @@ details-disclosure > details {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 16' fill='none'%3E%3Cline x1='0' y1='8' x2='100' y2='8' stroke='%23c9a45a' stroke-width='1.5'/%3E%3Cpolygon points='120,2 128,8 120,14 112,8' fill='%23c9a45a'/%3E%3Cline x1='140' y1='8' x2='240' y2='8' stroke='%23c9a45a' stroke-width='1.5'/%3E%3Cpolygon points='56,5 60,8 56,11 52,8' fill='%23c9a45a' opacity='0.6'/%3E%3Cpolygon points='184,5 188,8 184,11 180,8' fill='%23c9a45a' opacity='0.6'/%3E%3C/svg%3E") center / contain no-repeat;
   margin: 14px auto 0;
 }
-.color-scheme-3 .rich-text__heading::after,
-.color-scheme-4 .rich-text__heading::after,
-.color-scheme-5 .rich-text__heading::after {
+.color-scheme-4 .rich-text__heading::after {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 16' fill='none'%3E%3Cline x1='0' y1='8' x2='100' y2='8' stroke='%23f4ede0' stroke-width='1.5'/%3E%3Cpolygon points='120,2 128,8 120,14 112,8' fill='%23f4ede0'/%3E%3Cline x1='140' y1='8' x2='240' y2='8' stroke='%23f4ede0' stroke-width='1.5'/%3E%3Cpolygon points='56,5 60,8 56,11 52,8' fill='%23f4ede0' opacity='0.6'/%3E%3Cpolygon points='184,5 188,8 184,11 180,8' fill='%23f4ede0' opacity='0.6'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
