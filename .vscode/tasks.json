@@ -4,7 +4,17 @@
     {
       "label": "Commit and Push",
       "type": "shell",
-      "command": "git add -A && git commit -m \"Update: $(git status --short | awk '{print $2}' | tr '\\n' ' ' | sed 's/ $//')\" && git push",
+      "command": "git add -A; $files = (git diff --cached --name-only | Select-Object -First 5) -join ', '; if (-not $files) { $files = 'files' }; git commit -m \"Update: $files\"; git push",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-Command"]
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "presentation": {
         "reveal": "always",
         "panel": "shared",

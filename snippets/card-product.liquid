@@ -548,6 +548,11 @@
             </div>
           {% endif %}
         {% endif %}
+        <div class="no-js-hidden" style="text-align: center; padding: 0.75rem 0 0.25rem;">
+          <a href="{{ card_product.url }}" style="color: #c9a45a; text-decoration: underline; font-size: 1rem;">
+            View {{ card_product.type | default: 'Product' }}
+          </a>
+        </div>
         <div class="card__badge {{ settings.badge_position }}">
           {%- if card_product.available == false -%}
             <span

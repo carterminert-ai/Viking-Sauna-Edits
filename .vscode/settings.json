@@ -1,4 +1,8 @@
 {
   "git.postCommitCommand": "push",
-  "git.useEditorAsCommitInput": false
+  "git.useEditorAsCommitInput": false,
+  "git.inputValidation": false,
+  "git.enableSmartCommit": true,
+  "git.smartCommitChanges": "all",
+  "git.confirmSync": false
 }
