@@ -4,7 +4,7 @@
     {
       "label": "Commit and Push",
       "type": "shell",
-      "command": "git add -A; $files = (git diff --cached --name-only | Select-Object -First 5) -join ', '; if (-not $files) { $files = 'files' }; git commit -m \"Update: $files\"; git pull --rebase origin main; git push",
+      "command": "git add -A && git commit -m 'Update' && git pull --rebase origin main && git push",
       "options": {
         "shell": {
           "executable": "powershell.exe",
