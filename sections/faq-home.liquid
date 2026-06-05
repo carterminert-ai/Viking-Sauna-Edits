@@ -1,0 +1,97 @@
+<style>
+  .viking-faq { max-width: 780px; margin: 0 auto; }
+  .viking-faq details {
+    border-bottom: 1px solid #ebebeb;
+    padding: 0;
+  }
+  .viking-faq details:first-child { border-top: 1px solid #ebebeb; }
+  .viking-faq summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 4px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a1a18;
+    cursor: pointer;
+    list-style: none;
+    letter-spacing: 0.01em;
+  }
+  .viking-faq summary::-webkit-details-marker { display: none; }
+  .viking-faq summary::after {
+    content: '+';
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: #c9a45a;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-left: 16px;
+    transition: transform 0.2s;
+  }
+  .viking-faq details[open] summary::after { content: '−'; }
+  .viking-faq .faq-answer {
+    padding: 0 4px 20px;
+    font-size: 0.97rem;
+    color: #444;
+    line-height: 1.7;
+  }
+</style>
+
+<section style="background:#ffffff; padding:64px 20px; border-top:1px solid #ebebeb;">
+  <div style="max-width:780px; margin:0 auto; text-align:center;">
+    <h2 style="font-size:2rem; color:#1a1a18; margin:0 0 8px;">Frequently Asked Questions</h2>
+    <div style="width:240px; height:16px; background:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 16' fill='none'%3E%3Cline x1='0' y1='8' x2='100' y2='8' stroke='%23c9a45a' stroke-width='1.5'/%3E%3Cpolygon points='120,2 128,8 120,14 112,8' fill='%23c9a45a'/%3E%3Cline x1='140' y1='8' x2='240' y2='8' stroke='%23c9a45a' stroke-width='1.5'/%3E%3Cpolygon points='56,5 60,8 56,11 52,8' fill='%23c9a45a' opacity='0.6'/%3E%3Cpolygon points='184,5 188,8 184,11 180,8' fill='%23c9a45a' opacity='0.6'/%3E%3C/svg%3E\") center/contain no-repeat; margin:0 auto 40px;"></div>
+  </div>
+
+  <div class="viking-faq">
+
+    <details>
+      <summary>How long does assembly take?</summary>
+      <div class="faq-answer">Most customers complete assembly in 4–6 hours with basic tools. Every order includes detailed step-by-step instructions. Many customers assemble solo — though having a second person makes it easier.</div>
+    </details>
+
+    <details>
+      <summary>How is my sauna shipped?</summary>
+      <div class="faq-answer">Saunas ship via freight on a pallet to your address. Delivery is curbside — the carrier will bring it to the end of your driveway. You'll need a way to move it from there. Lead times and scheduling are coordinated after purchase. Contact us with any questions before ordering.</div>
+    </details>
+
+    <details>
+      <summary>Can it stay outside year-round?</summary>
+      <div class="faq-answer">Yes. Our saunas are engineered specifically for outdoor use in all climates — including cold winters and wet environments. The cedar construction naturally resists moisture, decay, and temperature swings.</div>
+    </details>
+
+    <details>
+      <summary>Can it be used indoors?</summary>
+      <div class="faq-answer">Absolutely. Our saunas work great in garages, gym rooms, or any well-ventilated indoor space. You'll need proper ventilation and a way to route the heater exhaust if using a wood-burning model.</div>
+    </details>
+
+    <details>
+      <summary>What size heater do I need?</summary>
+      <div class="faq-answer">We recommend a 6kW electric heater for most of our models, which heats the space to 170°F in under 30 minutes. Heater sizing depends on the cubic footage of the sauna. Contact us and we'll make a specific recommendation for your model.</div>
+    </details>
+
+    <details>
+      <summary>What is your warranty?</summary>
+      <div class="faq-answer">All Viking Saunas come with a 3-year warranty covering structural defects and components. We stand behind our craftsmanship — if something isn't right, we'll make it right. Contact us at sales@vikingsaunaco.com.</div>
+    </details>
+
+    <details>
+      <summary>Do you offer financing?</summary>
+      <div class="faq-answer">Yes — Shopify Pay allows you to split your purchase into installments at checkout. For larger orders or custom quotes, contact us directly and we can discuss options.</div>
+    </details>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "FAQ"
+    }
+  ]
+}
+{% endschema %}
