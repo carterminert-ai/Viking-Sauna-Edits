@@ -99,7 +99,10 @@
         </div>
       {%- endform -%}
     </product-form>
-        <div style="margin-top:12px;padding:10px 14px;background:#f5f1ea;border-radius:4px;font-size:0.875rem;line-height:1.6;"><strong>Free Shipping</strong> | <strong>~2 Week Lead Time</strong> - Each sauna is handcrafted to order in Boise, Idaho.</div>
+        {%- assign in_sauna_collection = product.collections | where: 'handle', 'viking-saunas' -%}
+        {%- if in_sauna_collection.size > 0 -%}
+          <div style="margin-top:12px;padding:10px 14px;background:#f5f1ea;border-radius:4px;font-size:0.875rem;line-height:1.6;"><strong>Free Shipping</strong> | <strong>~2 Week Lead Time</strong> - Each sauna is handcrafted to order in Boise, Idaho.</div>
+        {%- endif -%}
   {%- else -%}
     <div class="product-form">
       <div class="product-form__buttons form">
