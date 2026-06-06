@@ -3687,11 +3687,6 @@ details-disclosure > details {
   display: none !important;
 }
 
-/* Hide native Shopify variant pills — Easify Options handles selection instead */
-variant-selects,
-variant-radios {
-  display: none !important;
-}
 
 .card__inner {
   aspect-ratio: 1 / 1 !important;
