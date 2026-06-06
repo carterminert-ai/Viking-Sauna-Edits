@@ -10,7 +10,7 @@
 {
   "current": {
     "logo": "shopify://shop_images/viking-sauna-forest-on-cream-transparent.png",
-    "logo_width": 500,
+    "logo_width": 260,
     "favicon": "shopify://shop_images/vsc-favicon.png",
     "type_header_font": "crimson_text_n6",
     "heading_scale": 100,
@@ -147,9 +147,11 @@
     "blocks": {
       "316487575649303945": {
         "type": "shopify://apps/easify-options/blocks/app-embed-block/d2288b18-c1ba-42f5-b3b3-26c75c8820bf",
-        "disabled": false,
+        "disabled": true,
         "settings": {
-          "theme_app_version": "none"
+          "theme_app_version": "none",
+          "path_loading_mode": "include",
+          "page_paths": ""
         }
       }
     },
