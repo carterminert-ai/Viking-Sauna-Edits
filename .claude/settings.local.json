@@ -7,7 +7,10 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git pull *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(node -e ' *)",
+      "PowerShell(cd \"c:\\\\Users\\\\smart\\\\OneDrive\\\\Documents\\\\GitHub\\\\Viking-Sauna-Edits\"; $data = Get-Content 'templates/index.json' -Raw | ConvertFrom-Json; $data.sections | Add-Member -NotePropertyName 'sauna_comparison_home' -NotePropertyValue \\([PSCustomObject]@{type='sauna-comparison';settings=[PSCustomObject]@{}}\\); $data.order = @\\('hero_slideshow','trust_badges_home','featured_collection_home','sauna_comparison_home','sauna_quiz_home','reviews_home','trust_signals_home','multirow_XLJgBY','faq_home','gallery_slider_home'\\); $data | ConvertTo-Json -Depth 20 -Compress | Out-File 'templates/index.json' -Encoding utf8; Write-Output \"Done\")",
+      "Bash(git checkout *)"
     ]
   }
 }

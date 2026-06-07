@@ -115,10 +115,6 @@
         "padding_bottom": 52
       }
     },
-    "sauna_comparison_home": {
-      "type": "sauna-comparison",
-      "settings": {}
-    },
     "sauna_quiz_home": {
       "type": "sauna-quiz",
       "settings": {}
@@ -417,11 +413,10 @@
     "hero_slideshow",
     "trust_badges_home",
     "featured_collection_home",
-    "sauna_comparison_home",
     "sauna_quiz_home",
-    "reviews_home",
     "trust_signals_home",
     "multirow_XLJgBY",
+    "reviews_home",
     "faq_home",
     "gallery_slider_home"
   ]
