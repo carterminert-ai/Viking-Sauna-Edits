@@ -295,6 +295,10 @@
         "padding_bottom": 52
       }
     },
+    "custom_sauna_home": {
+      "type": "custom-sauna",
+      "settings": {}
+    },
     "faq_home": {
       "type": "faq-home",
       "settings": {}
@@ -422,6 +426,7 @@
     "reviews_home",
     "trust_signals_home",
     "multirow_XLJgBY",
+    "custom_sauna_home",
     "faq_home",
     "gallery_slider_home"
   ]
