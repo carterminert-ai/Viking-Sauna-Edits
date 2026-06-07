@@ -154,7 +154,7 @@
         "col_12": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/IMG_4370.jpg",
+            "image": "shopify://shop_images/IMG_6840.png",
             "title": "",
             "text": "",
             "link_label": "",
@@ -184,7 +184,7 @@
         "gp_7": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-7.jpg",
+            "image": "shopify://shop_images/IMG_6051_dae7cee0-a069-41e5-bb32-70a9510521b3.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -204,7 +204,7 @@
         "gp_9": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-9.jpg",
+            "image": "shopify://shop_images/IMG_6597_1.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -214,7 +214,7 @@
         "gp_10": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-10.jpg",
+            "image": "shopify://shop_images/IMG_6800_cc07f8b2-1dc9-461d-8b0c-67db7a277719.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -264,7 +264,7 @@
         "gp_15": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-15.jpg",
+            "image": "shopify://shop_images/IMG_6808_9ec19b5f-f63a-49f9-ac3e-56b3515271dc.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -294,7 +294,7 @@
         "gp_1": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-1.jpg",
+            "image": "shopify://shop_images/IMG_6561_1_ca69f7e3-5ea5-4954-9bbc-ff2b6cc5c91b.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -304,7 +304,7 @@
         "gp_2": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-2.jpg",
+            "image": "shopify://shop_images/IMG_6583.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -314,7 +314,7 @@
         "gp_3": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/gallery-pics-3.jpg",
+            "image": "shopify://shop_images/IMG_6680.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -408,7 +408,7 @@
         "heading": "",
         "heading_size": "h2",
         "enable_video_looping": false,
-        "video": "shopify://files/videos/IMG_3921.mp4",
+        "video": "shopify://files/videos/IMG_6801.mov",
         "video_url": "",
         "description": "",
         "full_width": false,
