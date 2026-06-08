@@ -15,6 +15,7 @@
 {%- endcomment -%}
 
 {%- unless product.has_only_default_variant -%}
+  {%- unless template.suffix == 'heater' -%}
   <variant-selects
     id="variant-selects-{{ section.id }}"
     data-section="{{ section.id }}"
@@ -146,4 +147,5 @@
       {{ product.selected_or_first_available_variant | json }}
     </script>
   </variant-selects>
+  {%- endunless -%}
 {%- endunless -%}
