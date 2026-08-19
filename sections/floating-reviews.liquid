@@ -1,0 +1,275 @@
+<style>
+  .floating-reviews {
+    background: #111;
+    padding: 60px 0 70px;
+    overflow: hidden;
+  }
+
+  .floating-reviews__header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 0 20px;
+  }
+
+  .floating-reviews__title {
+    color: #fff;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    margin: 0 0 10px;
+    letter-spacing: 0.04em;
+  }
+
+  .floating-reviews__subtitle {
+    color: #f5a623;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .floating-reviews__tracks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .floating-reviews__row {
+    display: flex;
+    width: max-content;
+    gap: 20px;
+  }
+
+  .floating-reviews__row--forward {
+    animation: fr-scroll-left 40s linear infinite;
+  }
+
+  .floating-reviews__row--backward {
+    animation: fr-scroll-right 45s linear infinite;
+  }
+
+  .floating-reviews__row:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes fr-scroll-left {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes fr-scroll-right {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  .floating-reviews__bubble {
+    background: #1e1e1e;
+    border: 1px solid #2e2e2e;
+    border-radius: 16px;
+    padding: 24px 28px;
+    width: 320px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fr-bob var(--bob-duration, 4s) ease-in-out infinite;
+    animation-delay: var(--bob-delay, 0s);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  @keyframes fr-bob {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-7px); }
+  }
+
+  .floating-reviews__stars {
+    color: #f5a623;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+
+  .floating-reviews__google {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: -4px;
+  }
+
+  .floating-reviews__google-logo {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .floating-reviews__google-text {
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .floating-reviews__text {
+    color: #ccc;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .floating-reviews__name {
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin: 0;
+  }
+</style>
+
+<section class="floating-reviews">
+  <div class="floating-reviews__header">
+    <p class="floating-reviews__subtitle">★★★★★ &nbsp; Google Reviews</p>
+    <h2 class="floating-reviews__title">{{ section.settings.title }}</h2>
+  </div>
+
+  {%- assign all_blocks = section.blocks -%}
+  {%- assign half = all_blocks.size | divided_by: 2 -%}
+
+  <div class="floating-reviews__tracks">
+    {%- comment -%} Row 1 — first half of reviews, duplicated for seamless loop {%- endcomment -%}
+    <div class="floating-reviews__row floating-reviews__row--forward">
+      {%- for i in (1..2) -%}
+        {%- for block in all_blocks limit: half -%}
+          {%- assign bob_duration = forloop.index | modulo: 3 | plus: 3 -%}
+          {%- assign bob_delay = forloop.index | modulo: 4 -%}
+          <div class="floating-reviews__bubble"
+               style="--bob-duration: {{ bob_duration }}s; --bob-delay: {{ bob_delay }}s;"
+               {{ block.shopify_attributes }}>
+            <div class="floating-reviews__google">
+              <svg class="floating-reviews__google-logo" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span class="floating-reviews__google-text">Google Review</span>
+            </div>
+            <div class="floating-reviews__stars">★★★★★</div>
+            <p class="floating-reviews__text">{{ block.settings.review_text }}</p>
+            <p class="floating-reviews__name">— {{ block.settings.reviewer_name }}</p>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Row 2 — second half of reviews, duplicated for seamless loop {%- endcomment -%}
+    <div class="floating-reviews__row floating-reviews__row--backward">
+      {%- for i in (1..2) -%}
+        {%- for block in all_blocks offset: half -%}
+          {%- assign bob_duration = forloop.index | modulo: 3 | plus: 3 -%}
+          {%- assign bob_delay = forloop.index | modulo: 5 | plus: 1 -%}
+          <div class="floating-reviews__bubble"
+               style="--bob-duration: {{ bob_duration }}s; --bob-delay: {{ bob_delay }}s;"
+               {{ block.shopify_attributes }}>
+            <div class="floating-reviews__google">
+              <svg class="floating-reviews__google-logo" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+              <span class="floating-reviews__google-text">Google Review</span>
+            </div>
+            <div class="floating-reviews__stars">★★★★★</div>
+            <p class="floating-reviews__text">{{ block.settings.review_text }}</p>
+            <p class="floating-reviews__name">— {{ block.settings.reviewer_name }}</p>
+          </div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Floating Reviews",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "What Our Customers Are Saying"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer Name",
+          "default": "Happy Customer"
+        },
+        {
+          "type": "textarea",
+          "id": "review_text",
+          "label": "Review Text",
+          "default": "Amazing sauna — built to last and absolutely beautiful."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Floating Reviews",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Steve — Ragnar 4-Person Barrel Sauna",
+            "review_text": "The fit and finish is above what some might expect. The door has a self-closing hinge and fitted strips so no exposed end grain. The sauna heats from 31 degrees to 170 in just under 30 minutes with a 6kw heater. I could not be more pleased."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Ryan",
+            "review_text": "After months of research I decided to purchase from Viking. After checking out their shop in person I knew I would be getting a quality product. Assembly was straightforward on my own — about 4 hours. The sauna gets up to 200 degrees within 40 mins. The wood is absolutely beautiful."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Fay",
+            "review_text": "I use my sauna every night! It's amazing, I still love the smell and the steam does so much for my overall health. I seem to sleep better when I use it. Thanks to the team at Viking Sauna!"
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Mike",
+            "review_text": "Incredible craftsmanship. The cedar smell alone makes every session worth it. Heats up fast and holds the temperature perfectly. Best investment I've made for my health."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Jennifer",
+            "review_text": "We visited their shop before buying and were blown away by the quality. Six months in and it still looks and performs like day one. The team was helpful throughout the whole process."
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Tom",
+            "review_text": "Solid construction, beautiful wood, and it heats up incredibly fast. My whole family uses it daily. Worth every penny — I'd buy it again without hesitation."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
