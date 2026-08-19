@@ -240,61 +240,6 @@
         "padding_bottom": 36
       }
     },
-    "reviews_home": {
-      "type": "multicolumn",
-      "blocks": {
-        "review_1": {
-          "type": "column",
-          "settings": {
-            "title": "★★★★★",
-            "text": "<p><em>\"The fit and finish is above what some might expect. The door has a self-closing hinge and fitted strips so no exposed end grain. The cradle uses pressure treated wood with red cedar above — just some of the little touches that show this team is not a cookie cutter cheap build. The sauna heats from 31 degrees to 170 in just under 30 minutes with a 6kw heater. I could not be more pleased.\"</em></p><p><strong>— Steve, Ragnar 4-Person Outdoor Barrel Sauna</strong></p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "review_2": {
-          "type": "column",
-          "settings": {
-            "title": "★★★★★",
-            "text": "<p><em>\"After months of research I decided to purchase from Viking. After checking out their shop in person I knew I would be getting a quality product. Assembly was straightforward on my own — about 4 hours. The sauna gets up to 200 degrees within 40 mins. The wood is absolutely beautiful and the smell inside is fantastic. Overall a great purchase that looks absolutely beautiful in our backyard.\"</em></p><p><strong>— Ryan</strong></p>",
-            "link_label": "",
-            "link": ""
-          }
-        },
-        "review_3": {
-          "type": "column",
-          "settings": {
-            "title": "★★★★★",
-            "text": "<p><em>\"I use my sauna every night! It's amazing, I still love the smell and the steam does so much for my overall health. I seem to sleep better when I use it. Thanks to the team at Viking Sauna!\"</em></p><p><strong>— Fay</strong></p>",
-            "link_label": "",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "review_1",
-        "review_2",
-        "review_3"
-      ],
-      "name": "Customer Reviews",
-      "settings": {
-        "title": "What Our Customers Say",
-        "heading_size": "h2",
-        "image_width": "third",
-        "image_ratio": "square",
-        "button_label": "",
-        "button_link": "",
-        "masonry_layout": false,
-        "columns_desktop": 3,
-        "column_alignment": "center",
-        "background_style": "none",
-        "color_scheme": "scheme-5",
-        "columns_mobile": "1",
-        "swipe_on_mobile": false,
-        "padding_top": 52,
-        "padding_bottom": 52
-      }
-    },
     "custom_sauna_home": {
       "type": "custom-sauna",
       "settings": {}
@@ -474,7 +419,6 @@
     "featured_collection_home",
     "sauna_comparison_home",
     "sauna_quiz_home",
-    "reviews_home",
     "trust_signals_home",
     "multirow_XLJgBY",
     "custom_sauna_home",
