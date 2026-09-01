@@ -248,17 +248,55 @@
       "type": "faq-home",
       "settings": {}
     },
-    "google_reviews_home": {
-      "type": "google-reviews",
+    "floating_reviews_home": {
+      "type": "floating-reviews",
+      "blocks": {
+        "fr_review_1": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Steve — Ragnar 4-Person Barrel Sauna",
+            "review_text": "The fit and finish is above what some might expect. The door has a self-closing hinge and fitted strips so no exposed end grain. The sauna heats from 31 degrees to 170 in just under 30 minutes with a 6kw heater. I could not be more pleased."
+          }
+        },
+        "fr_review_2": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Ryan",
+            "review_text": "After months of research I decided to purchase from Viking. After checking out their shop in person I knew I would be getting a quality product. Assembly was straightforward on my own — about 4 hours. The sauna gets up to 200 degrees within 40 mins. The wood is absolutely beautiful."
+          }
+        },
+        "fr_review_3": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Fay",
+            "review_text": "I use my sauna every night! It's amazing, I still love the smell and the steam does so much for my overall health. I seem to sleep better when I use it. Thanks to the team at Viking Sauna!"
+          }
+        },
+        "fr_review_4": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Mike",
+            "review_text": "Incredible craftsmanship. The cedar smell alone makes every session worth it. Heats up fast and holds the temperature perfectly. Best investment I've made for my health."
+          }
+        },
+        "fr_review_5": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Jennifer",
+            "review_text": "We visited their shop before buying and were blown away by the quality. Six months in and it still looks and performs like day one. The team was helpful throughout the whole process."
+          }
+        },
+        "fr_review_6": {
+          "type": "review",
+          "settings": {
+            "reviewer_name": "Tom",
+            "review_text": "Solid construction, beautiful wood, and it heats up incredibly fast. My whole family uses it daily. Worth every penny — I'd buy it again without hesitation."
+          }
+        }
+      },
+      "block_order": ["fr_review_1","fr_review_2","fr_review_3","fr_review_4","fr_review_5","fr_review_6"],
       "settings": {
-        "title": "What Our Customers Are Saying",
-        "heading_size": "h2",
-        "api_key": "",
-        "place_id": "",
-        "max_reviews": 5,
-        "color_scheme": "scheme-1",
-        "padding_top": 52,
-        "padding_bottom": 52
+        "title": "What Our Customers Are Saying"
       }
     },
     "gallery_slider_home": {
