@@ -1,0 +1,215 @@
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  #gr-grid-{{ section.id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .gr-card {
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    padding: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .gr-stars {
+    color: #fbbc04;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .gr-text {
+    font-size: 1.4rem;
+    line-height: 1.7;
+    flex: 1;
+    margin: 0;
+  }
+  .gr-author {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-top: auto;
+  }
+  .gr-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  .gr-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .gr-name { font-weight: 600; font-size: 1.4rem; }
+  .gr-date { font-size: 1.2rem; opacity: 0.55; }
+  .gr-footer {
+    text-align: center;
+    margin-top: 2.4rem;
+    font-size: 1.4rem;
+  }
+  .gr-footer a { color: inherit; text-decoration: underline; }
+{%- endstyle -%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="section-{{ section.id }}-padding page-width">
+    {%- if section.settings.title != blank -%}
+      <h2 class="title inline-richtext {{ section.settings.heading_size }}">{{ section.settings.title }}</h2>
+    {%- endif -%}
+    <div id="gr-grid-{{ section.id }}"></div>
+    <div id="gr-footer-{{ section.id }}" class="gr-footer"></div>
+    <div id="gr-map-{{ section.id }}" style="display:none;width:1px;height:1px;"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var apiKey  = {{ section.settings.api_key  | json }};
+  var placeId = {{ section.settings.place_id | json }};
+  var max     = {{ section.settings.max_reviews | default: 5 }};
+
+  if (!apiKey || !placeId) return;
+
+  function render() {
+    var map = new google.maps.Map(
+      document.getElementById('gr-map-{{ section.id }}'),
+      { center: { lat: 0, lng: 0 }, zoom: 1 }
+    );
+    new google.maps.places.PlacesService(map).getDetails(
+      { placeId: placeId, fields: ['reviews', 'url'] },
+      function(place, status) {
+        if (status !== google.maps.places.PlacesServiceStatus.OK || !place || !place.reviews) return;
+        var grid   = document.getElementById('gr-grid-{{ section.id }}');
+        var footer = document.getElementById('gr-footer-{{ section.id }}');
+        var html   = '';
+        place.reviews.slice(0, max).forEach(function(r) {
+          var stars = '', i;
+          for (i = 0; i < 5; i++) stars += i < r.rating ? '★' : '☆';
+          var txt = r.text.length > 320 ? r.text.slice(0, 317) + '…' : r.text;
+          html += '<div class="gr-card">'
+               +  '<div class="gr-stars">' + stars + '</div>'
+               +  '<p class="gr-text">' + txt + '</p>'
+               +  '<div class="gr-author">';
+          if (r.profile_photo_url) {
+            html += '<img class="gr-photo" src="' + r.profile_photo_url + '" alt="' + r.author_name + '">';
+          } else {
+            html += '<div class="gr-initials">' + (r.author_name || '?').charAt(0).toUpperCase() + '</div>';
+          }
+          html += '<div>'
+               +  '<div class="gr-name">' + r.author_name + '</div>'
+               +  '<div class="gr-date">' + r.relative_time_description + '</div>'
+               +  '</div></div></div>';
+        });
+        grid.innerHTML = html;
+        if (place.url) {
+          footer.innerHTML = '<a href="' + place.url + '" target="_blank" rel="noopener noreferrer">Read all reviews on Google ↗</a>';
+        }
+      }
+    );
+  }
+
+  if (window.google && window.google.maps && window.google.maps.places) {
+    render();
+  } else {
+    var cb = 'grInit{{ section.id | replace: "-", "_" }}';
+    window[cb] = render;
+    var s = document.createElement('script');
+    s.async = true;
+    s.defer = true;
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + apiKey + '&libraries=places&callback=' + cb;
+    document.head.appendChild(s);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Google Reviews",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": { "groups": ["header", "footer"] },
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "What Our Customers Are Saying"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h1", "label": "X-Large" },
+        { "value": "h2", "label": "Large" },
+        { "value": "h3", "label": "Medium" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "text",
+      "id": "api_key",
+      "label": "Google Maps API key",
+      "info": "Create at console.cloud.google.com — enable Maps JavaScript API + Places API, then restrict key to your domain"
+    },
+    {
+      "type": "text",
+      "id": "place_id",
+      "label": "Google Place ID",
+      "info": "Find at developers.google.com/maps/documentation/javascript/examples/places-placeid-finder"
+    },
+    {
+      "type": "range",
+      "id": "max_reviews",
+      "label": "Reviews to show",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5,
+      "info": "Google returns at most 5 reviews"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "label": "Padding top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0, "max": 100, "step": 4, "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    }
+  ],
+  "presets": [{ "name": "Google Reviews" }]
+}
+{% endschema %}
