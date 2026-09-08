@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "terms_of_service": {
+      "type": "page-tos",
+      "settings": {}
+    }
+  },
+  "order": ["terms_of_service"]
+}

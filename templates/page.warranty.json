@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "limited_warranty": {
+      "type": "page-warranty",
+      "settings": {}
+    }
+  },
+  "order": ["limited_warranty"]
+}
