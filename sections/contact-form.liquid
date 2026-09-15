@@ -1,31 +1,241 @@
 {{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
 
-{%- style -%}
-  .section-{{ section.id }}-padding {
-    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
-    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+<style>
+  .vsc-contact-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: {{ section.settings.padding_top }}px 24px {{ section.settings.padding_bottom }}px;
   }
-
-  @media screen and (min-width: 750px) {
-    .section-{{ section.id }}-padding {
-      padding-top: {{ section.settings.padding_top }}px;
-      padding-bottom: {{ section.settings.padding_bottom }}px;
-    }
+  .vsc-contact-wrap h1 {
+    font-family: var(--font-heading-family);
+    font-size: 2.6rem;
+    margin-bottom: 1rem;
+    color: #1a1a18;
   }
-{%- endstyle -%}
+  .vsc-contact-intro {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 0.75rem;
+  }
+  .vsc-contact-links {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 2.5rem;
+  }
+  .vsc-contact-links a {
+    color: #c9a45a;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .vsc-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) {
+    .vsc-form-row { grid-template-columns: 1fr; }
+    .vsc-contact-wrap h1 { font-size: 2rem; }
+  }
+  .vsc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+  .vsc-field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1a1a18;
+  }
+  .vsc-field input,
+  .vsc-field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #d0d0d0;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: var(--font-body-family);
+    color: #1a1a18;
+    background: #fff;
+    box-sizing: border-box;
+    transition: border-color 0.15s;
+  }
+  .vsc-field input:focus,
+  .vsc-field textarea:focus {
+    outline: none;
+    border-color: #c9a45a;
+  }
+  .vsc-field textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  .vsc-sms-consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f7f7f5;
+    border: 1px solid #ebebeb;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+  }
+  .vsc-sms-consent input[type="checkbox"] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    accent-color: #c9a45a;
+    cursor: pointer;
+  }
+  .vsc-sms-consent label {
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+  .vsc-sms-consent label a {
+    color: #c9a45a;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .vsc-submit-btn {
+    display: inline-block;
+    background: #1a1a18;
+    color: #fff;
+    font-family: var(--font-heading-family);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+  }
+  .vsc-submit-btn:hover {
+    background: #c9a45a;
+  }
+  .vsc-success {
+    background: #f0f7f0;
+    border: 1px solid #b0d4b0;
+    border-radius: 6px;
+    padding: 16px 20px;
+    color: #2d5a2d;
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+  }
+  .vsc-divider {
+    border: none;
+    border-top: 1px solid #ebebeb;
+    margin: 32px 0;
+  }
+</style>
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <div class="contact page-width page-width--narrow section-{{ section.id }}-padding">
-    <h1 style="margin-bottom: 2rem; font-size: 4rem;">Contact Viking Sauna Co.</h1>
-    <p style="font-size: 1.6rem; line-height: 1.7;">
-      Unfortunately Viking Sauna Co. does not lease a retail location at this time. The Google Maps location is in the area that we are near — this is because we are respecting the privacy of the homeowner's house that we work at. If you call us however, we will give you the address to come see our shop and check them out. :)
+  <div class="vsc-contact-wrap">
+
+    <h1>Contact Viking Sauna Co.</h1>
+
+    <p class="vsc-contact-intro">
+      Viking Sauna Co. does not lease a retail location at this time. The Google Maps location is in the area we work near — we respect the privacy of the homeowner. Call us and we'll give you the address to come see our shop in person.
     </p>
-    <p style="font-size: 1.6rem; margin-top: 1.5rem;">
-      Email Us - <a href="mailto:sales@vikingsaunaco.com">sales@vikingsaunaco.com</a> (IF YOU EMAIL PLEASE INCLUDE YOUR NUMBER)
-    </p>
-    <p style="font-size: 1.6rem; margin-top: 0.75rem; list-style: none; padding-left: 0;">
-      Call Us - <a href="tel:+12085679385" style="text-decoration: underline; display: inline-block;">(208)-567-9385</a>
-    </p>
+    <div class="vsc-contact-links">
+      <div style="margin-bottom:6px;">Email: <a href="mailto:sales@vikingsaunaco.com">sales@vikingsaunaco.com</a> &nbsp;(please include your phone number)</div>
+      <div>Call: <a href="tel:+12085679385">(208) 567-9385</a></div>
+    </div>
+
+    <hr class="vsc-divider">
+
+    {%- if contact.posted_successfully? -%}
+      <div class="vsc-success">
+        <strong>Message sent!</strong> We'll be in touch within 1–2 business days.
+      </div>
+    {%- endif -%}
+
+    {%- form 'contact', id: 'ContactForm' -%}
+
+      <div class="vsc-form-row">
+        <div class="vsc-field">
+          <label for="ContactForm-first-name">First Name <span aria-hidden="true">*</span></label>
+          <input
+            type="text"
+            id="ContactForm-first-name"
+            name="contact[first_name]"
+            value="{% if contact.first_name %}{{ contact.first_name }}{% endif %}"
+            required
+            autocomplete="given-name"
+            placeholder="First name"
+          >
+        </div>
+        <div class="vsc-field">
+          <label for="ContactForm-last-name">Last Name <span aria-hidden="true">*</span></label>
+          <input
+            type="text"
+            id="ContactForm-last-name"
+            name="contact[last_name]"
+            value="{% if contact.last_name %}{{ contact.last_name }}{% endif %}"
+            required
+            autocomplete="family-name"
+            placeholder="Last name"
+          >
+        </div>
+      </div>
+
+      <div class="vsc-form-row">
+        <div class="vsc-field">
+          <label for="ContactForm-email">Email Address <span aria-hidden="true">*</span></label>
+          <input
+            type="email"
+            id="ContactForm-email"
+            name="contact[email]"
+            value="{% if contact.email %}{{ contact.email }}{% endif %}"
+            required
+            autocomplete="email"
+            placeholder="you@example.com"
+          >
+        </div>
+        <div class="vsc-field">
+          <label for="ContactForm-phone">Phone Number</label>
+          <input
+            type="tel"
+            id="ContactForm-phone"
+            name="contact[phone]"
+            value="{% if contact.phone %}{{ contact.phone }}{% endif %}"
+            autocomplete="tel"
+            placeholder="(208) 555-0100"
+          >
+        </div>
+      </div>
+
+      <div class="vsc-field">
+        <label for="ContactForm-body">Message <span aria-hidden="true">*</span></label>
+        <textarea
+          id="ContactForm-body"
+          name="contact[body]"
+          required
+          placeholder="Tell us what you're interested in — sauna model, size, custom build, etc."
+        >{% if contact.body %}{{ contact.body }}{% endif %}</textarea>
+      </div>
+
+      <div class="vsc-sms-consent">
+        <input
+          type="checkbox"
+          id="ContactForm-sms-consent"
+          name="contact[sms_consent]"
+          value="yes"
+        >
+        <label for="ContactForm-sms-consent">
+          By checking this box, I consent to receive Conversational SMS from Viking Sauna Co. Reply STOP to opt-out; Reply HELP for support; Message &amp; data rates may apply; Messaging frequency may vary. Visit <a href="/pages/privacy-policy">our Privacy Policy</a> to see our privacy policy.
+        </label>
+      </div>
+
+      <button type="submit" class="vsc-submit-btn">Send Message</button>
+
+    {%- endform -%}
+
   </div>
 </div>
 
