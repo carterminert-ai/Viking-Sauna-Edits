@@ -152,94 +152,101 @@
 
     <hr class="vsc-divider">
 
-    {%- if contact.posted_successfully? -%}
+    <div id="vsc-success-msg" style="display:none;">
       <div class="vsc-success">
         <strong>Message received — thank you!</strong> We typically respond within one business day. If you haven't heard back by then, feel free to email us directly at <a href="mailto:sales@vikingsaunaco.com" style="color:#2d5a2d;font-weight:600;">sales@vikingsaunaco.com</a> or give us a call at <a href="tel:+12085679385" style="color:#2d5a2d;font-weight:600;">(208) 567-9385</a>.
       </div>
-    {%- else -%}
+    </div>
 
-    {%- form 'contact', id: 'ContactForm' -%}
+    <div id="vsc-form-wrapper">
+      {%- form 'contact', id: 'ContactForm' -%}
 
-      <div class="vsc-form-row">
+        <input type="hidden" name="redirect" value="{{ request.origin }}/pages/contact?sent=1">
+
+        <div class="vsc-form-row">
+          <div class="vsc-field">
+            <label for="ContactForm-first-name">First Name <span aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="ContactForm-first-name"
+              name="contact[first_name]"
+              autocomplete="given-name"
+              placeholder="First name"
+              required
+            >
+          </div>
+          <div class="vsc-field">
+            <label for="ContactForm-last-name">Last Name <span aria-hidden="true">*</span></label>
+            <input
+              type="text"
+              id="ContactForm-last-name"
+              name="contact[last_name]"
+              autocomplete="family-name"
+              placeholder="Last name"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="vsc-form-row">
+          <div class="vsc-field">
+            <label for="ContactForm-email">Email Address <span aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="ContactForm-email"
+              name="contact[email]"
+              autocomplete="email"
+              placeholder="you@example.com"
+              required
+            >
+          </div>
+          <div class="vsc-field">
+            <label for="ContactForm-phone">Phone Number</label>
+            <input
+              type="tel"
+              id="ContactForm-phone"
+              name="contact[phone]"
+              autocomplete="tel"
+              placeholder="(208) 555-0100"
+            >
+          </div>
+        </div>
+
         <div class="vsc-field">
-          <label for="ContactForm-first-name">First Name <span aria-hidden="true">*</span></label>
-          <input
-            type="text"
-            id="ContactForm-first-name"
-            name="contact[first_name]"
-            value="{% if contact.first_name %}{{ contact.first_name }}{% endif %}"
+          <label for="ContactForm-body">Message <span aria-hidden="true">*</span></label>
+          <textarea
+            id="ContactForm-body"
+            name="contact[body]"
             required
-            autocomplete="given-name"
-            placeholder="First name"
-          >
+            placeholder="Tell us what you're interested in — sauna model, size, custom build, etc."
+          ></textarea>
         </div>
-        <div class="vsc-field">
-          <label for="ContactForm-last-name">Last Name <span aria-hidden="true">*</span></label>
+
+        <div class="vsc-sms-consent">
           <input
-            type="text"
-            id="ContactForm-last-name"
-            name="contact[last_name]"
-            value="{% if contact.last_name %}{{ contact.last_name }}{% endif %}"
-            required
-            autocomplete="family-name"
-            placeholder="Last name"
+            type="checkbox"
+            id="ContactForm-sms-consent"
+            name="contact[sms_consent]"
+            value="yes"
           >
+          <label for="ContactForm-sms-consent">
+            By checking this box, I consent to receive Conversational SMS from Viking Sauna Co. Reply STOP to opt-out; Reply HELP for support; Message &amp; data rates may apply; Messaging frequency may vary. Visit <a href="/pages/privacy-policy">our Privacy Policy</a> to see our privacy policy.
+          </label>
         </div>
-      </div>
 
-      <div class="vsc-form-row">
-        <div class="vsc-field">
-          <label for="ContactForm-email">Email Address <span aria-hidden="true">*</span></label>
-          <input
-            type="email"
-            id="ContactForm-email"
-            name="contact[email]"
-            value="{% if contact.email %}{{ contact.email }}{% endif %}"
-            required
-            autocomplete="email"
-            placeholder="you@example.com"
-          >
-        </div>
-        <div class="vsc-field">
-          <label for="ContactForm-phone">Phone Number</label>
-          <input
-            type="tel"
-            id="ContactForm-phone"
-            name="contact[phone]"
-            value="{% if contact.phone %}{{ contact.phone }}{% endif %}"
-            autocomplete="tel"
-            placeholder="(208) 555-0100"
-          >
-        </div>
-      </div>
+        <button type="submit" class="vsc-submit-btn">Send Message</button>
 
-      <div class="vsc-field">
-        <label for="ContactForm-body">Message <span aria-hidden="true">*</span></label>
-        <textarea
-          id="ContactForm-body"
-          name="contact[body]"
-          required
-          placeholder="Tell us what you're interested in — sauna model, size, custom build, etc."
-        >{% if contact.body %}{{ contact.body }}{% endif %}</textarea>
-      </div>
+      {%- endform -%}
+    </div>
 
-      <div class="vsc-sms-consent">
-        <input
-          type="checkbox"
-          id="ContactForm-sms-consent"
-          name="contact[sms_consent]"
-          value="yes"
-        >
-        <label for="ContactForm-sms-consent">
-          By checking this box, I consent to receive Conversational SMS from Viking Sauna Co. Reply STOP to opt-out; Reply HELP for support; Message &amp; data rates may apply; Messaging frequency may vary. Visit <a href="/pages/privacy-policy">our Privacy Policy</a> to see our privacy policy.
-        </label>
-      </div>
-
-      <button type="submit" class="vsc-submit-btn">Send Message</button>
-
-    {%- endform -%}
-
-    {%- endif -%}
+    <script>
+      (function() {
+        if (new URLSearchParams(window.location.search).get('sent') === '1') {
+          document.getElementById('vsc-success-msg').style.display = 'block';
+          document.getElementById('vsc-form-wrapper').style.display = 'none';
+        }
+      })();
+    </script>
 
   </div>
 </div>
