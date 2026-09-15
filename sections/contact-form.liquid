@@ -140,7 +140,10 @@
     <h1>Contact Viking Sauna Co.</h1>
 
     <p class="vsc-contact-intro">
-      Have a question or ready to get started? Reach out by email, give us a call, or fill out the form below and we'll get back to you.
+      Viking Sauna Co. does not lease a retail location at this time. The Google Maps location is in the area we work near — we respect the privacy of the homeowner. Call us and we'll give you the address to come see our shop in person.
+    </p>
+    <p class="vsc-contact-intro" style="margin-top:0.5rem;">
+      Have a question or ready to order? Reach out directly or fill out the form below and we'll get back to you.
     </p>
     <div class="vsc-contact-links">
       <div style="margin-bottom:6px;">Email: <a href="mailto:sales@vikingsaunaco.com">sales@vikingsaunaco.com</a></div>
@@ -153,7 +156,7 @@
       <div class="vsc-success">
         <strong>Message received — thank you!</strong> We typically respond within one business day. If you haven't heard back by then, feel free to email us directly at <a href="mailto:sales@vikingsaunaco.com" style="color:#2d5a2d;font-weight:600;">sales@vikingsaunaco.com</a> or give us a call at <a href="tel:+12085679385" style="color:#2d5a2d;font-weight:600;">(208) 567-9385</a>.
       </div>
-    {%- endif -%}
+    {%- else -%}
 
     {%- form 'contact', id: 'ContactForm' -%}
 
@@ -235,6 +238,8 @@
       <button type="submit" class="vsc-submit-btn">Send Message</button>
 
     {%- endform -%}
+
+    {%- endif -%}
 
   </div>
 </div>
