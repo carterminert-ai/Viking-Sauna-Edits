@@ -158,6 +158,8 @@
       </div>
     </div>
 
+    <script>var vscContactSent = {{ contact.posted_successfully? | json }};</script>
+
     <div id="vsc-form-wrapper">
       {%- form 'contact', id: 'ContactForm' -%}
 
@@ -232,47 +234,19 @@
           </label>
         </div>
 
-        <button type="submit" id="vsc-submit-btn" class="vsc-submit-btn">Send Message</button>
+        <button type="submit" class="vsc-submit-btn">Send Message</button>
 
       {%- endform -%}
     </div>
 
     <script>
       (function() {
-        var form = document.getElementById('ContactForm');
-        if (!form) return;
-
-        form.addEventListener('submit', function(e) {
-          e.preventDefault();
-
-          var btn = document.getElementById('vsc-submit-btn');
-          btn.disabled = true;
-          btn.textContent = 'Sending...';
-
-          var data = new FormData(form);
-
-          fetch('/contact', {
-            method: 'POST',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
-            body: data
-          })
-          .then(function(res) {
-            if (res.ok || res.redirected) {
-              document.getElementById('vsc-form-wrapper').style.display = 'none';
-              document.getElementById('vsc-success-msg').style.display = 'block';
-              window.scrollTo({ top: document.getElementById('vsc-success-msg').offsetTop - 80, behavior: 'smooth' });
-            } else {
-              btn.disabled = false;
-              btn.textContent = 'Send Message';
-              alert('Something went wrong. Please email us directly at sales@vikingsaunaco.com');
-            }
-          })
-          .catch(function() {
-            btn.disabled = false;
-            btn.textContent = 'Send Message';
-            alert('Something went wrong. Please email us directly at sales@vikingsaunaco.com');
-          });
-        });
+        if (vscContactSent) {
+          document.getElementById('vsc-form-wrapper').style.display = 'none';
+          var msg = document.getElementById('vsc-success-msg');
+          msg.style.display = 'block';
+          window.scrollTo({ top: msg.offsetTop - 80, behavior: 'smooth' });
+        }
       })();
     </script>
 
