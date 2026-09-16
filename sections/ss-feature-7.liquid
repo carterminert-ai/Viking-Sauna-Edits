@@ -407,7 +407,7 @@
                 {% if block.settings.image != blank %}
                   <img src="{{ block.settings.image | img_url: '300x' }}" alt="{{ block.settings.heading | strip_html }}">
                 {% else %}
-                  {% render 'icon-' | append: block.settings.icon %}
+                  {% render 'icon-', append: block.settings.icon %}
                 {% endif %}
               </div>
               <div class="feature-title-{{ section.id }}">{{ block.settings.heading }}</div>
@@ -432,7 +432,7 @@
                   {% if block.settings.image != blank %}
                     <img src="{{ block.settings.image | img_url: '300x' }}" alt="{{ block.settings.heading | strip_html }}">
                   {% else %}
-                    {% render 'icon-' | append: block.settings.icon %}
+                    {% render 'icon-', append: block.settings.icon %}
                   {% endif %}
                 </div>
                 <div class="feature-title-{{ section.id }}">{{ block.settings.heading }}</div>
@@ -1124,4 +1124,16 @@
     }
   ]
 }
-{% endschema %}
+{% endschema %}{%- comment -%}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'icon-' | append: block.settings.icon %}"
+  to: "{% render 'icon-', append: block.settings.icon %}"
+  position: 75190..75239
+- from: "{% render 'icon-' | append: block.settings.icon %}"
+  to: "{% render 'icon-', append: block.settings.icon %}"
+  position: 76453..76502
+{%- endcomment -%}
